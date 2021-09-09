@@ -14,6 +14,9 @@ tokio = { version = "1.11.0", features = ["macros", "time", "rt-multi-thread"] }
 uuid = {version = "0.8.2", features = ["serde","v4"]}
 chrono = "0.4.19"
 fake = "2.4.1"
+serde = { version="1", features = ["derive"] }
+serde-aux = "2.3.0"
+config = "0.11.0"
 
 [dependencies.sqlx]
 version = "0.5.7"

@@ -13,7 +13,7 @@ pub struct User {
 pub async fn login(username: String, _password: String) -> Result<User, Error> {
     Ok(User {
         id: Uuid::new_v4(),
-        username: username,
+        username,
         created_at: Utc::now(),
         updated_at: Utc::now(),
     })

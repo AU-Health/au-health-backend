@@ -1,0 +1,5 @@
+application:
+  host: 0.0.0.0
+  playground_enabled: false
+database:
+  require_ssl: true
