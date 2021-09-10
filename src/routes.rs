@@ -13,7 +13,7 @@ use axum::{
 
 use crate::{
     configuration::Settings,
-    gql::{GqlSchema, QueryRoot},
+    gql::{GqlSchema, MutationRoot, QueryRoot},
 };
 
 /// initalize GraphQL Playground UI for testing.
@@ -32,7 +32,7 @@ async fn graphql_handler(schema: Extension<GqlSchema>, req: Json<Request>) -> Js
 
 pub fn build_router(
     configuration: &Settings,
-    schema: Schema<QueryRoot, EmptyMutation, EmptySubscription>,
+    schema: Schema<QueryRoot, MutationRoot, EmptySubscription>,
 ) -> Router<BoxRoute> {
     let schema_router = Router::new()
         .route(

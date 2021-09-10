@@ -5,8 +5,9 @@
 
 use std::time::Duration;
 
-use async_graphql::{EmptyMutation, EmptySubscription, Schema};
-use au_health_backend::{configuration::get_configuration, gql::QueryRoot, routes::build_router};
+use au_health_backend::{
+    configuration::get_configuration, gql::build_schema, routes::build_router,
+};
 
 use sqlx::postgres::PgPoolOptions;
 
@@ -21,9 +22,7 @@ async fn main() {
         .await
         .expect("Failed to connect to Postgres");
 
-    let schema = Schema::build(QueryRoot, EmptyMutation, EmptySubscription)
-        .data(connection_pool)
-        .finish();
+    let schema = build_schema().data(connection_pool).finish();
 
     let router = build_router(&configuration, schema);
 
