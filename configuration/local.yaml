@@ -1,5 +1,4 @@
 application:
-  host: localhost
   playground_enabled: true
 database:
   require_ssl: false

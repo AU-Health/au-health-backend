@@ -3,38 +3,12 @@
 
 #![warn(missing_docs)]
 
-use std::{future::Future, time::Duration};
+use std::time::Duration;
 
-use async_graphql::{
-    http::{playground_source, GraphQLPlaygroundConfig},
-    EmptyMutation, EmptySubscription, Request, Response, Schema,
-};
-use au_health_backend::{
-    configuration::{self, get_configuration},
-    gql::{GqlSchema, QueryRoot},
-};
-use axum::{
-    extract::Extension,
-    handler::get,
-    http::StatusCode,
-    response::{Html, IntoResponse},
-    AddExtensionLayer, Json, Router,
-};
+use async_graphql::{EmptyMutation, EmptySubscription, Schema};
+use au_health_backend::{configuration::get_configuration, gql::QueryRoot, routes::build_router};
+
 use sqlx::postgres::PgPoolOptions;
-
-/// initalize GraphQL Playground UI for testing.
-async fn graphql_playground() -> impl IntoResponse {
-    Html(playground_source(GraphQLPlaygroundConfig::new("/")))
-}
-
-async fn forbidden_response() -> impl IntoResponse {
-    StatusCode::FORBIDDEN
-}
-
-/// Processes GraphQL requests.
-async fn graphql_handler(schema: Extension<GqlSchema>, req: Json<Request>) -> Json<Response> {
-    schema.execute(req.0).await.into()
-}
 
 /// Entry point to server.
 #[tokio::main]
@@ -51,17 +25,23 @@ async fn main() {
         .data(connection_pool)
         .finish();
 
-    let router = Router::new()
-        .route(
-            &configuration.application.graphql_path,
-            get(graphql_playground).post(graphql_handler),
-        )
-        .layer(AddExtensionLayer::new(schema));
+    let router = build_router(&configuration, schema);
 
-    println!("Playground: http://localhost:3000");
+    let address = format!(
+        "{}:{}",
+        configuration.application.host, configuration.application.port
+    );
 
-    axum::Server::bind(&"0.0.0.0:3000".parse().unwrap())
+    print_init_messages(&address, &configuration.application.graphql_path);
+
+    axum::Server::bind(&address.parse().unwrap())
         .serve(router.into_make_service())
         .await
         .unwrap()
+}
+
+fn print_init_messages(address: &String, graphql_path: &String) {
+    let nice_link = address.replace("0.0.0.0", "localhost");
+
+    println!("Server running on http://{}{}", nice_link, graphql_path);
 }
