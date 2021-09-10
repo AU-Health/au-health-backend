@@ -41,7 +41,8 @@ async fn main() {
 }
 
 fn print_init_messages(address: &String, graphql_path: &String) {
-    let nice_link = address.replace("0.0.0.0", "localhost");
+    let nice_link = address.clone().replace("0.0.0.0", "localhost");
 
-    println!("Server running on http://{}{}", nice_link, graphql_path);
+    println!("Server running on {}", address);
+    println!("GraphQL link: http://{}{}", nice_link, graphql_path)
 }
