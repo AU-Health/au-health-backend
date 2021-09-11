@@ -1,4 +1,5 @@
 application:
-  playground_enabled: true
+  graphql:
+    playground_enabled: true
 database:
   require_ssl: false

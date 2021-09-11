@@ -1,54 +1,17 @@
-use async_graphql::{
-    Context, EmptySubscription, Error, InputObject, Object, Schema, SchemaBuilder,
-};
-use sqlx::{Pool, Postgres};
+use async_graphql::{EmptySubscription, MergedObject, Schema, SchemaBuilder};
 
-use crate::auth;
+use super::resolvers::user::{UserMutation, UserQuery};
 
-pub fn build_schema() -> SchemaBuilder<QueryRoot, MutationRoot, EmptySubscription> {
-    Schema::build(QueryRoot, MutationRoot, EmptySubscription)
+pub fn build_schema() -> GqlSchemaBuilder {
+    Schema::build(Query::default(), Mutation::default(), EmptySubscription)
 }
-
-#[derive(InputObject)]
-pub struct NewUser {
-    pub email: String,
-    pub username: String,
-    pub password: String,
-}
-
 /// Root for all GraphQL Queries.
-pub struct QueryRoot;
+#[derive(MergedObject, Default)]
+pub struct Query(UserQuery);
 
-#[Object]
-impl QueryRoot {
-    async fn ping(&self, _ctx: &Context<'_>) -> Result<bool, Error> {
-        Ok(true)
-    }
-}
+#[derive(MergedObject, Default)]
+pub struct Mutation(UserMutation);
 
-pub struct MutationRoot;
+pub type GqlSchema = Schema<Query, Mutation, EmptySubscription>;
 
-#[Object]
-impl MutationRoot {
-    /// Login to application.
-    async fn login(
-        &self,
-        _ctx: &Context<'_>,
-        #[graphql(desc = "Username")] username: String,
-        #[graphql(desc = "Password")] password: String,
-    ) -> Result<auth::User, Error> {
-        auth::login_user(username, password).await
-    }
-
-    async fn register(
-        &self,
-        ctx: &Context<'_>,
-        #[graphql(desc = "New User information")] new_user: NewUser,
-    ) -> Result<auth::User, Error> {
-        let db_pool = ctx.data::<Pool<Postgres>>().unwrap();
-
-        auth::register_user(db_pool, new_user).await
-    }
-}
-
-pub type GqlSchema = Schema<QueryRoot, MutationRoot, EmptySubscription>;
+pub type GqlSchemaBuilder = SchemaBuilder<Query, Mutation, EmptySubscription>;

@@ -3,11 +3,9 @@
 
 #![warn(missing_docs)]
 
-use std::time::Duration;
+use std::{net::TcpListener, time::Duration};
 
-use au_health_backend::{
-    configuration::get_configuration, gql::build_schema, routes::build_router,
-};
+use au_health_backend::{configuration::get_configuration, startup::run};
 
 use sqlx::postgres::PgPoolOptions;
 
@@ -22,21 +20,23 @@ async fn main() {
         .await
         .expect("Failed to connect to Postgres");
 
-    let schema = build_schema().data(connection_pool).finish();
-
-    let router = build_router(&configuration, schema);
-
     let address = format!(
         "{}:{}",
         configuration.application.host, configuration.application.port
     );
 
-    print_init_messages(&address, &configuration.application.graphql_path);
+    let listener = TcpListener::bind(address.clone())
+        .expect(format!("Failed to bind listener on addr {}", address).as_str());
 
-    axum::Server::bind(&address.parse().unwrap())
-        .serve(router.into_make_service())
-        .await
-        .unwrap()
+    print_init_messages(&address, &configuration.application.graphql.path);
+
+    run(
+        listener,
+        connection_pool,
+        &configuration.application.graphql,
+    )
+    .await
+    .unwrap();
 }
 
 fn print_init_messages(address: &String, graphql_path: &String) {

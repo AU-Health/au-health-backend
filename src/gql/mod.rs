@@ -1,3 +1,2 @@
-mod schema;
-
-pub use schema::*;
+pub mod resolvers;
+pub mod schema;

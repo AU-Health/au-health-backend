@@ -1,6 +1,6 @@
 use async_graphql::{
     http::{playground_source, GraphQLPlaygroundConfig},
-    EmptyMutation, EmptySubscription, Request, Response, Schema,
+    Request, Response,
 };
 use axum::{
     extract::Extension,
@@ -11,10 +11,7 @@ use axum::{
     AddExtensionLayer, Json, Router,
 };
 
-use crate::{
-    configuration::Settings,
-    gql::{GqlSchema, MutationRoot, QueryRoot},
-};
+use crate::{configuration::GraphQLSettings, gql::schema::GqlSchema};
 
 /// initalize GraphQL Playground UI for testing.
 async fn graphql_playground() -> impl IntoResponse {
@@ -30,30 +27,21 @@ async fn graphql_handler(schema: Extension<GqlSchema>, req: Json<Request>) -> Js
     schema.execute(req.0).await.into()
 }
 
-pub fn build_router(
-    configuration: &Settings,
-    schema: Schema<QueryRoot, MutationRoot, EmptySubscription>,
+pub fn build_graphql_router(
+    configuration: &GraphQLSettings,
+    schema: GqlSchema,
 ) -> Router<BoxRoute> {
     let schema_router = Router::new()
-        .route(
-            &configuration.application.graphql_path,
-            post(graphql_handler),
-        )
+        .route(&configuration.path, post(graphql_handler))
         .layer(AddExtensionLayer::new(schema));
 
-    if configuration.application.playground_enabled {
+    if configuration.playground_enabled {
         schema_router
-            .route(
-                &configuration.application.graphql_path,
-                get(graphql_playground),
-            )
+            .route(&configuration.path, get(graphql_playground))
             .boxed()
     } else {
         schema_router
-            .route(
-                &configuration.application.graphql_path,
-                get(forbidden_response),
-            )
+            .route(&configuration.path, get(forbidden_response))
             .boxed()
     }
 }

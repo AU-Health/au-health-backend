@@ -1,35 +1,66 @@
-use async_graphql::{Error, SimpleObject};
-use chrono::{DateTime, Utc};
+use argon2::{
+    password_hash::{rand_core::OsRng, SaltString},
+    Argon2, PasswordHasher,
+};
+use async_graphql::Error;
+use chrono::Utc;
 use sqlx::{Pool, Postgres};
 use uuid::Uuid;
 
-use crate::gql::NewUser;
+use crate::domain::user::{LoginUser, NewUser, User};
 
-#[derive(SimpleObject, Debug)]
-pub struct User {
-    id: Uuid,
-    username: String,
-    created_at: DateTime<Utc>,
-    updated_at: DateTime<Utc>,
+pub async fn login_user(
+    pool: &Pool<Postgres>,
+    argon2: &Argon2<'_>,
+    login_user: LoginUser,
+) -> Result<User, Error> {
+    let user = sqlx::query_as!(
+        User,
+        "SELECT id, username, password, created_at, updated_at
+    FROM users
+    WHERE username = $1
+    LIMIT 1;",
+        login_user.username
+    )
+    .fetch_one(pool)
+    .await
+    .map_err(|e| {
+        tracing::error!("Failed to execute query: {:?}", e);
+        e
+    })?;
+
+    let valid = user
+        .verify_password(argon2, login_user.password)
+        .map_err(|e| {
+            tracing::info!("Failed to verify password");
+            e
+        })?;
+
+    match valid {
+        false => Err(Error::new("Invalid password")),
+        true => Ok(user),
+    }
 }
 
-pub async fn login_user(username: String, _password: String) -> Result<User, Error> {
-    Ok(User {
-        id: Uuid::new_v4(),
-        username,
-        created_at: Utc::now(),
-        updated_at: Utc::now(),
-    })
-}
+pub async fn register_user(
+    pool: &Pool<Postgres>,
+    argon2: &Argon2<'_>,
+    new_user: NewUser,
+) -> Result<User, Error> {
+    let salt = SaltString::generate(&mut OsRng);
 
-pub async fn register_user(pool: &Pool<Postgres>, new_user: NewUser) -> Result<User, Error> {
+    let hashed_password = argon2
+        .hash_password(new_user.password.as_bytes(), &salt)?
+        .to_string();
+
     let user = sqlx::query_as!(
         User,
         "INSERT INTO users (id, username, password, created_at, updated_at) 
-    VALUES ($1, $2, $3, $4, $5) RETURNING id, username, created_at, updated_at;",
+    VALUES ($1, $2, $3, $4, $5) 
+    RETURNING id, username, password, created_at, updated_at;",
         Uuid::new_v4(),
         new_user.username,
-        new_user.password,
+        hashed_password,
         Utc::now(),
         Utc::now()
     )
