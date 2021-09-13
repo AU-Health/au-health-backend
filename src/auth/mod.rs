@@ -1,6 +1,6 @@
 mod authentication;
 
 pub use authentication::*;
-mod cookie;
+mod session;
 
-pub use cookie::*;
+pub use session::*;

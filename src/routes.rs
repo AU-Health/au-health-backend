@@ -11,7 +11,7 @@ use axum::{
     AddExtensionLayer, Router,
 };
 
-use crate::{auth::AuthCookies, configuration::GraphQLSettings, gql::schema::GqlSchema};
+use crate::{auth::AuthSessionCookie, configuration::GraphQLSettings, gql::schema::GqlSchema};
 
 /// initalize GraphQL Playground UI for testing.
 async fn graphql_playground() -> impl IntoResponse {
@@ -22,7 +22,7 @@ async fn graphql_playground() -> impl IntoResponse {
 async fn graphql_handler(
     schema: Extension<GqlSchema>,
     graphql_req: GraphQLRequest,
-    auth_cookies: AuthCookies,
+    auth_cookies: Option<AuthSessionCookie>,
 ) -> GraphQLResponse {
     schema
         .execute(graphql_req.into_inner().data(auth_cookies))

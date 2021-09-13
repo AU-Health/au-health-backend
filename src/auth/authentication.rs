@@ -9,6 +9,27 @@ use uuid::Uuid;
 
 use crate::domain::user::{LoginUser, NewUser, User};
 
+impl User {
+    pub async fn query_by_id(pool: &Pool<Postgres>, user_id: Uuid) -> Result<Self, Error> {
+        let user = sqlx::query_as!(
+            User,
+            "SELECT id, username, password, created_at, updated_at
+        FROM users
+        WHERE id = $1
+        LIMIT 1;",
+            user_id
+        )
+        .fetch_one(pool)
+        .await
+        .map_err(|e| {
+            tracing::error!("Failed to execute query: {:?}", e);
+            e
+        })?;
+
+        Ok(user)
+    }
+}
+
 pub async fn login_user(
     pool: &Pool<Postgres>,
     argon2: &Argon2<'_>,
