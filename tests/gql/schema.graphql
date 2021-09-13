@@ -1,0 +1,45 @@
+# Directs the executor to query only when the field exists.
+directive @ifdef on FIELD
+
+# Implement the DateTime<Utc> scalar
+#
+# The input/output is a string in RFC3339 format.
+scalar DateTime
+
+input LoginUser {
+  username: String!
+  password: String!
+}
+
+type Mutation {
+  login(
+    # Login User credentials
+    loginUser: LoginUser!
+  ): User!
+  register(
+    # New User information
+    newUser: NewUser!
+  ): User!
+  logout: Boolean!
+}
+
+input NewUser {
+  email: String!
+  username: String!
+  password: String!
+}
+
+# Root for all GraphQL Queries.
+type Query {
+  me: User
+  healthCheck: Boolean!
+}
+
+scalar UUID
+
+type User {
+  id: UUID!
+  username: String!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}

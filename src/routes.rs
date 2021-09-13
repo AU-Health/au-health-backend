@@ -34,10 +34,7 @@ async fn forbidden_response() -> impl IntoResponse {
     StatusCode::FORBIDDEN
 }
 
-pub fn build_graphql_router(
-    configuration: &GraphQLSettings,
-    schema: GqlSchema,
-) -> Router<BoxRoute> {
+pub fn build_graphql_router(configuration: GraphQLSettings, schema: GqlSchema) -> Router<BoxRoute> {
     let schema_router = Router::new()
         .route(&configuration.path, post(graphql_handler))
         .layer(AddExtensionLayer::new(schema));

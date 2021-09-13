@@ -12,7 +12,7 @@ use crate::{
 pub async fn run(
     listener: TcpListener,
     connection_pool: Pool<Postgres>,
-    graphql_configuration: &GraphQLSettings,
+    graphql_configuration: GraphQLSettings,
     session_store: RedisSessionStore,
 ) -> Result<(), hyper::Error> {
     let schema = build_schema()

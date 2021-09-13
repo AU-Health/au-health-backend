@@ -36,7 +36,7 @@ async fn main() {
     run(
         listener,
         connection_pool,
-        &configuration.application.graphql,
+        configuration.application.graphql,
         store,
     )
     .await
