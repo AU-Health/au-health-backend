@@ -29,7 +29,7 @@ async fn main() {
     );
 
     let listener = TcpListener::bind(address.clone())
-        .expect(format!("Failed to bind listener on addr {}", address).as_str());
+        .unwrap_or_else(|_| panic!("Failed to bind listener on addr {}", address));
 
     print_init_messages(&address, &configuration.application.graphql.path);
 
@@ -43,8 +43,8 @@ async fn main() {
     .unwrap();
 }
 
-fn print_init_messages(address: &String, graphql_path: &String) {
-    let nice_link = address.clone().replace("0.0.0.0", "localhost");
+fn print_init_messages(address: &str, graphql_path: &str) {
+    let nice_link = address.replace("0.0.0.0", "localhost");
 
     println!("Server running on {}", address);
     println!("GraphQL link: http://{}{}", nice_link, graphql_path)

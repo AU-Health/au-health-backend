@@ -28,8 +28,8 @@ where
             None => Err("Cookie header not set".to_string()),
             Some(cookies) => cookies
                 .get(AUTH_COOKIE_NAME)
-                .map(|s| s.to_string().into())
-                .ok_or("Auth cookie not set".to_string())
+                .map(|s| s.to_string())
+                .ok_or_else(|| "Auth cookie not set".to_string())
                 .map(|s| Self { cookie_value: s }),
         }
     }
@@ -56,7 +56,7 @@ impl AuthSessionCookie {
     pub async fn create_cookie(&self, ctx: &Context<'_>) -> Result<(), Error> {
         ctx.append_http_header(
             SET_COOKIE,
-            format!("{}={}; SameSite=Lax", AUTH_COOKIE_NAME, self.cookie_value).to_string(),
+            format!("{}={}; SameSite=Lax", AUTH_COOKIE_NAME, self.cookie_value),
         );
 
         Ok(())
@@ -81,7 +81,7 @@ impl GetUserId for Session {
     async fn get_user_id(&self) -> Result<Uuid, Error> {
         let user_id = self
             .get::<Uuid>("user_id")
-            .ok_or(format!("User ID not set in Session"))?;
+            .ok_or("User ID not set in Session")?;
 
         Ok(user_id)
     }
