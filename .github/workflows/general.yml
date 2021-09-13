@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 env:
   CARGO_TERM_COLOR: always
+  DATABASE_URL: "postgres://postgres:password@localhost:5432/wellness"
 
 jobs:
   test:
