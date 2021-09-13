@@ -5,6 +5,7 @@
 
 use std::{net::TcpListener, time::Duration};
 
+use async_redis_session::RedisSessionStore;
 use au_health_backend::{configuration::get_configuration, startup::run};
 
 use sqlx::postgres::PgPoolOptions;
@@ -20,6 +21,8 @@ async fn main() {
         .await
         .expect("Failed to connect to Postgres");
 
+    let store = RedisSessionStore::new("redis://127.0.0.1/").expect("Failed to connect to Redis");
+
     let address = format!(
         "{}:{}",
         configuration.application.host, configuration.application.port
@@ -34,6 +37,7 @@ async fn main() {
         listener,
         connection_pool,
         &configuration.application.graphql,
+        store,
     )
     .await
     .unwrap();

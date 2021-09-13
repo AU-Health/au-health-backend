@@ -1,19 +1,23 @@
 use std::net::TcpListener;
 
 use argon2::Argon2;
+use async_redis_session::RedisSessionStore;
 use sqlx::{Pool, Postgres};
 
 use crate::{
     configuration::GraphQLSettings, gql::schema::build_schema, routes::build_graphql_router,
 };
 
+/// Builds GraphQL Schema and runs Axum server
 pub async fn run(
     listener: TcpListener,
     connection_pool: Pool<Postgres>,
     graphql_configuration: &GraphQLSettings,
+    session_store: RedisSessionStore,
 ) -> Result<(), hyper::Error> {
     let schema = build_schema()
         .data(connection_pool)
+        .data(session_store)
         .data(Argon2::default())
         .finish();
 

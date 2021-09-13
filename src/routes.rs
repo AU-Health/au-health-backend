@@ -1,30 +1,37 @@
-use async_graphql::{
-    http::{playground_source, GraphQLPlaygroundConfig},
-    Request, Response,
-};
+use async_graphql::http::{playground_source, GraphQLPlaygroundConfig};
+
+use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
+
 use axum::{
     extract::Extension,
     handler::{get, post},
     http::StatusCode,
     response::{Html, IntoResponse},
     routing::BoxRoute,
-    AddExtensionLayer, Json, Router,
+    AddExtensionLayer, Router,
 };
 
-use crate::{configuration::GraphQLSettings, gql::schema::GqlSchema};
+use crate::{auth::AuthCookies, configuration::GraphQLSettings, gql::schema::GqlSchema};
 
 /// initalize GraphQL Playground UI for testing.
 async fn graphql_playground() -> impl IntoResponse {
     Html(playground_source(GraphQLPlaygroundConfig::new("/graphql")))
 }
 
-async fn forbidden_response() -> impl IntoResponse {
-    StatusCode::FORBIDDEN
+/// Processes GraphQL requests.
+async fn graphql_handler(
+    schema: Extension<GqlSchema>,
+    graphql_req: GraphQLRequest,
+    auth_cookies: AuthCookies,
+) -> GraphQLResponse {
+    schema
+        .execute(graphql_req.into_inner().data(auth_cookies))
+        .await
+        .into()
 }
 
-/// Processes GraphQL requests.
-async fn graphql_handler(schema: Extension<GqlSchema>, req: Json<Request>) -> Json<Response> {
-    schema.execute(req.0).await.into()
+async fn forbidden_response() -> impl IntoResponse {
+    StatusCode::FORBIDDEN
 }
 
 pub fn build_graphql_router(

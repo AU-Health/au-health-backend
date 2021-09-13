@@ -57,7 +57,7 @@ pub async fn register_user(
         User,
         "INSERT INTO users (id, username, password, created_at, updated_at) 
     VALUES ($1, $2, $3, $4, $5) 
-    RETURNING id, username, password, created_at, updated_at;",
+    RETURNING *;",
         Uuid::new_v4(),
         new_user.username,
         hashed_password,

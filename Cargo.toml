@@ -7,7 +7,7 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-axum = "0.2.3"
+axum = {version = "0.2.3", features = ["headers"]}
 async-graphql = {version = "2.9.14", features = ["chrono", "uuid"]}
 slab = "0.4.4"
 tokio = { version = "1.11.0", features = ["macros", "time", "rt-multi-thread"] }
@@ -20,6 +20,12 @@ config = "0.11.0"
 tracing = "0.1.26"
 hyper = "0.14.12"
 argon2 = "0.3.0"
+async-session = "3.0.0"
+async-redis-session = "0.2.2"
+headers = "0.3.4"
+async-trait = "0.1.51"
+http = "0.2.4"
+async-graphql-axum = "2.9.15"
 
 [dependencies.sqlx]
 version = "0.5.7"
