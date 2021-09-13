@@ -10,7 +10,7 @@ use uuid::Uuid;
 
 mod gql;
 use cynic::{http::ReqwestExt, MutationBuilder, Operation, QueryBuilder};
-use gql::schema::queries::{HealthCheck, NewUser, Register};
+use gql::gql_schema::queries::{HealthCheck, NewUser, Register, RegisterArguments};
 
 pub async fn configure_database(config: &DatabaseSettings) -> PgPool {
     let mut connection = PgConnection::connect_with(&config.without_db())
@@ -88,11 +88,29 @@ async fn health_check_works() {
 async fn register_works() {
     let app = spawn_app().await;
 
-    let query: Operation<Register> = Register::build(&NewUser {
-        email: "mawefwefwefwef7@gmail.com".to_string(),
+    let user = NewUser {
+        email: "mattwilki17@gmail.com".to_string(),
         username: "zireael".to_string(),
         password: "hunter2".to_string(),
-    });
+    };
+
+    let query: Operation<Register> = Register::build(&RegisterArguments { user: user.clone() });
 
     let client = reqwest::Client::new();
+
+    let response = client
+        .post(&format!("{}/graphql", &app.address))
+        .run_graphql(query)
+        .await
+        .expect("Failed to send request");
+
+    if let Some(errors) = response.errors {
+        assert_eq!(errors.len(), 0, "Errors returned from server: {:?}", errors)
+    }
+
+    assert!(response.data.is_some());
+
+    let data = response.data.unwrap();
+
+    assert_eq!(data.register.username, user.username);
 }

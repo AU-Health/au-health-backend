@@ -11,7 +11,7 @@ use axum::{
     AddExtensionLayer, Router,
 };
 
-use crate::{auth::AuthSessionCookie, configuration::GraphQLSettings, gql::schema::GqlSchema};
+use crate::{auth::AuthSessionCookie, configuration::GraphQlSettings, gql::schema::GqlSchema};
 
 /// initalize GraphQL Playground UI for testing.
 async fn graphql_playground() -> impl IntoResponse {
@@ -34,7 +34,7 @@ async fn forbidden_response() -> impl IntoResponse {
     StatusCode::FORBIDDEN
 }
 
-pub fn build_graphql_router(configuration: GraphQLSettings, schema: GqlSchema) -> Router<BoxRoute> {
+pub fn build_graphql_router(configuration: GraphQlSettings, schema: GqlSchema) -> Router<BoxRoute> {
     let schema_router = Router::new()
         .route(&configuration.path, post(graphql_handler))
         .layer(AddExtensionLayer::new(schema));

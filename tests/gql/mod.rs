@@ -1,1 +1,1 @@
-pub mod schema;
+pub mod gql_schema;

@@ -5,14 +5,14 @@ use async_redis_session::RedisSessionStore;
 use sqlx::{Pool, Postgres};
 
 use crate::{
-    configuration::GraphQLSettings, gql::schema::build_schema, routes::build_graphql_router,
+    configuration::GraphQlSettings, gql::schema::build_schema, routes::build_graphql_router,
 };
 
 /// Builds GraphQL Schema and runs Axum server
 pub async fn run(
     listener: TcpListener,
     connection_pool: Pool<Postgres>,
-    graphql_configuration: GraphQLSettings,
+    graphql_configuration: GraphQlSettings,
     session_store: RedisSessionStore,
 ) -> Result<(), hyper::Error> {
     let schema = build_schema()

@@ -2,10 +2,14 @@
 pub mod queries {
     use super::schema;
 
-    #[derive(cynic::QueryFragment, Debug)]
-    #[cynic(graphql_type = "Query")]
-    pub struct HealthCheck {
-        pub health_check: bool,
+    #[derive(cynic::FragmentArguments, Debug)]
+    pub struct RegisterArguments {
+        pub user: NewUser,
+    }
+
+    #[derive(cynic::FragmentArguments, Debug)]
+    pub struct LoginArguments {
+        pub user: LoginUser,
     }
 
     #[derive(cynic::QueryFragment, Debug)]
@@ -15,15 +19,16 @@ pub mod queries {
     }
 
     #[derive(cynic::QueryFragment, Debug)]
-    #[cynic(graphql_type = "Mutation")]
-    pub struct Register {
-        #[arguments(new_user = NewUser { email: "".to_string(), password: "".to_string(), username: "".to_string() })]
-        pub register: User,
+    #[cynic(graphql_type = "Query")]
+    pub struct HealthCheck {
+        pub health_check: bool,
     }
 
-    #[derive(cynic::FragmentArguments)]
-    pub struct RegisterArguments {
-        pub user: NewUser,
+    #[derive(cynic::QueryFragment, Debug)]
+    #[cynic(graphql_type = "Mutation", argument_struct = "RegisterArguments")]
+    pub struct Register {
+        #[arguments(new_user = &args.user)]
+        pub register: User,
     }
 
     #[derive(cynic::QueryFragment, Debug)]
@@ -33,9 +38,9 @@ pub mod queries {
     }
 
     #[derive(cynic::QueryFragment, Debug)]
-    #[cynic(graphql_type = "Mutation")]
+    #[cynic(graphql_type = "Mutation", argument_struct = "LoginArguments")]
     pub struct Login {
-        #[arguments(login_user = LoginUser { password: "".to_string(), username: "".to_string() })]
+        #[arguments(login_user = &args.user)]
         pub login: User,
     }
 
@@ -47,17 +52,17 @@ pub mod queries {
         pub username: String,
     }
 
-    #[derive(cynic::InputObject, Clone, Debug)]
+    #[derive(cynic::InputObject, Debug, Clone)]
     pub struct NewUser {
         pub email: String,
-        pub password: String,
         pub username: String,
+        pub password: String,
     }
 
     #[derive(cynic::InputObject, Debug)]
     pub struct LoginUser {
-        pub password: String,
         pub username: String,
+        pub password: String,
     }
 
     #[derive(cynic::Scalar, Debug, Clone)]

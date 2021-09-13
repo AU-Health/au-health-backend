@@ -61,7 +61,7 @@ impl DatabaseSettings {
 }
 
 #[derive(serde::Deserialize)]
-pub struct GraphQLSettings {
+pub struct GraphQlSettings {
     pub path: String,
     pub playground_enabled: bool,
 }
@@ -71,7 +71,7 @@ pub struct ApplicationSettings {
     #[serde(deserialize_with = "deserialize_number_from_string")]
     pub port: u16,
     pub host: String,
-    pub graphql: GraphQLSettings,
+    pub graphql: GraphQlSettings,
 }
 
 pub enum Environment {

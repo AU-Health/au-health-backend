@@ -42,7 +42,9 @@ impl AuthSessionCookie {
         session_store: &RedisSessionStore,
     ) -> Result<Self, Error> {
         let mut session = Session::new();
-        session.insert(USER_ID_SESSION_KEY, user.id)?;
+        session
+            .insert(USER_ID_SESSION_KEY, user.id)
+            .map_err(|err| Error::new(format!("Unable to create user session: {:?}", err)))?;
 
         let cookie_value = session_store
             .store_session(session)
