@@ -5,7 +5,7 @@ use uuid::Uuid;
 
 use argon2::PasswordVerifier;
 
-#[derive(InputObject)]
+#[derive(InputObject, Clone)]
 pub struct NewUser {
     pub email: String,
     pub username: String,
@@ -22,6 +22,7 @@ pub struct LoginUser {
 pub struct User {
     pub id: Uuid,
     pub username: String,
+    pub email: String,
     #[graphql(skip)]
     pub password: String,
     pub created_at: DateTime<Utc>,

@@ -13,7 +13,7 @@ impl User {
     pub async fn query_by_id(pool: &Pool<Postgres>, user_id: Uuid) -> Result<Self, Error> {
         let user = sqlx::query_as!(
             User,
-            "SELECT id, username, password, created_at, updated_at
+            "SELECT id, email, username, password, created_at, updated_at
         FROM users
         WHERE id = $1
         LIMIT 1;",
@@ -37,7 +37,7 @@ pub async fn login_user(
 ) -> Result<User, Error> {
     let user = sqlx::query_as!(
         User,
-        "SELECT id, username, password, created_at, updated_at
+        "SELECT id, email, username, password, created_at, updated_at
     FROM users
     WHERE username = $1
     LIMIT 1;",
@@ -76,10 +76,11 @@ pub async fn register_user(
 
     let user = sqlx::query_as!(
         User,
-        "INSERT INTO users (id, username, password, created_at, updated_at) 
-    VALUES ($1, $2, $3, $4, $5) 
+        "INSERT INTO users (id, email, username, password, created_at, updated_at) 
+    VALUES ($1, $2, $3, $4, $5, $6) 
     RETURNING *;",
         Uuid::new_v4(),
+        new_user.email,
         new_user.username,
         hashed_password,
         Utc::now(),
