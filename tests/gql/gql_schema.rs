@@ -46,22 +46,21 @@ pub mod queries {
 
     #[derive(cynic::QueryFragment, Debug, Clone)]
     pub struct User {
+        pub email: String,
         pub created_at: DateTime,
         pub id: Uuid,
         pub updated_at: DateTime,
-        pub username: String,
     }
 
     #[derive(cynic::InputObject, Debug, Clone)]
     pub struct NewUser {
         pub email: String,
-        pub username: String,
         pub password: String,
     }
 
     #[derive(cynic::InputObject, Debug, Clone)]
     pub struct LoginUser {
-        pub username: String,
+        pub email: String,
         pub password: String,
     }
 

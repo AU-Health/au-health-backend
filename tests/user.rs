@@ -1,10 +1,9 @@
 mod gql;
 mod helpers;
+use std::convert::TryInto;
+
 use argon2::Argon2;
-use au_health_backend::{
-    auth::register_user,
-    domain::{self, user::User},
-};
+use au_health_backend::domain::{self, user::User, user_registration::VerifiedNewUser};
 use cynic::{MutationBuilder, Operation};
 use gql::gql_schema::queries::{
     Login, LoginArguments, LoginUser, NewUser, Register, RegisterArguments,
@@ -20,8 +19,7 @@ async fn register_works() {
     let app = spawn_app().await;
 
     let user = NewUser {
-        email: "mattwilki17@gmail.com".to_string(),
-        username: "zireael".to_string(),
+        email: "mw3915a@student.american.edu".to_string(),
         password: "hunter2".to_string(),
     };
 
@@ -29,7 +27,7 @@ async fn register_works() {
 
     let response = app.send_graphql_request(query).await;
 
-    assert_eq!(response.register.username.clone(), user.username.clone());
+    assert_eq!(response.register.email.clone(), user.email.clone());
 
     assert!(app.auth_cookie_present());
 
@@ -37,7 +35,7 @@ async fn register_works() {
 
     let db_user = sqlx::query_as!(
         User,
-        "SELECT id, username, email, password, created_at, updated_at
+        "SELECT id, email, password, created_at, updated_at
      FROM users 
      WHERE id = $1 LIMIT 1",
         user_id
@@ -53,18 +51,20 @@ async fn register_works() {
 async fn login_works() {
     let app = spawn_app().await;
 
-    let user = domain::user::NewUser {
-        email: "mattwilki17@gmail.com".to_string(),
-        username: "zireael".to_string(),
+    let user = domain::user_registration::NewUser {
+        email: "mw3915a@student.american.edu".to_string(),
         password: "hunter2".to_string(),
     };
 
-    register_user(&app.db_pool, &Argon2::default(), user.clone())
+    let verified_user: VerifiedNewUser = user.clone().try_into().expect("cannot verify user");
+
+    verified_user
+        .register_user(&app.db_pool, &Argon2::default())
         .await
         .expect("unable to register user");
 
     let login_user = LoginUser {
-        username: user.username,
+        email: user.email,
         password: user.password,
     };
 
@@ -74,7 +74,7 @@ async fn login_works() {
 
     let response = app.send_graphql_request(query).await;
 
-    assert_eq!(response.login.username, login_user.username);
+    assert_eq!(response.login.email, login_user.email);
 
     assert!(app.auth_cookie_present());
 }
@@ -84,8 +84,7 @@ async fn logout_works() {
     let app = spawn_app().await;
 
     let user = NewUser {
-        email: "mattwilki17@gmail.com".to_string(),
-        username: "zireael".to_string(),
+        email: "mw3915a@student.american.edu".to_string(),
         password: "hunter2".to_string(),
     };
 

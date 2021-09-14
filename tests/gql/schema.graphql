@@ -1,21 +1,22 @@
-# Directs the executor to query only when the field exists.
-directive @ifdef on FIELD
-
 # Implement the DateTime<Utc> scalar
 #
 # The input/output is a string in RFC3339 format.
 scalar DateTime
 
+# Input from GQL, consume with login_user() to get a User.
 input LoginUser {
-  username: String!
+  email: String!
   password: String!
 }
 
 type Mutation {
+  # Logs a user in. Sets cookie on their client.
   login(
     # Login User credentials
     loginUser: LoginUser!
   ): User!
+
+  # Registers a new user. Sets a cookie on their client, as if they logged in.
   register(
     # New User information
     newUser: NewUser!
@@ -23,23 +24,25 @@ type Mutation {
   logout: Boolean!
 }
 
+# Input from GQL
 input NewUser {
   email: String!
-  username: String!
   password: String!
 }
 
 # Root for all GraphQL Queries.
 type Query {
+  # Checks for the currently logged in user by parsing the cookie.
   me: User
   healthCheck: Boolean!
 }
 
 scalar UUID
 
+# User with all fields attached. Returned from DB.
 type User {
   id: UUID!
-  username: String!
+  email: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }

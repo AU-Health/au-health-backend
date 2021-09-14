@@ -1,9 +1,14 @@
+use std::convert::TryInto;
+
 use async_graphql::{Context, Error, Object};
 use http::header::SET_COOKIE;
 
 use crate::{
-    auth::{self, AuthSessionCookie, GetUserId},
-    domain::user::{LoginUser, NewUser, User},
+    auth::{AuthSessionCookie, GetUserId},
+    domain::{
+        user::{LoginUser, User},
+        user_registration::{NewUser, VerifiedNewUser},
+    },
     gql::context::ContextData,
 };
 
@@ -12,6 +17,7 @@ pub struct UserQuery;
 
 #[Object]
 impl UserQuery {
+    /// Checks for the currently logged in user by parsing the cookie.
     async fn me(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
         let context_data = ContextData::new(ctx);
 
@@ -41,6 +47,7 @@ pub struct UserMutation;
 
 #[Object]
 impl UserMutation {
+    /// Logs a user in. Sets cookie on their client.
     async fn login(
         &self,
         ctx: &Context<'_>,
@@ -55,7 +62,11 @@ impl UserMutation {
 
         let user = match is_logged_in {
             true => Err(logged_in_error()),
-            false => auth::login_user(context_data.db_pool, context_data.argon2, login_user).await,
+            false => {
+                login_user
+                    .login_user(context_data.db_pool, context_data.argon2)
+                    .await
+            }
         }?;
 
         let auth_session =
@@ -66,6 +77,7 @@ impl UserMutation {
         Ok(user)
     }
 
+    /// Registers a new user. Sets a cookie on their client, as if they logged in.
     async fn register(
         &self,
         ctx: &Context<'_>,
@@ -80,7 +92,13 @@ impl UserMutation {
 
         let user = match is_logged_in {
             true => Err(logged_in_error()),
-            false => auth::register_user(context_data.db_pool, context_data.argon2, new_user).await,
+            false => {
+                let verified_user: VerifiedNewUser = new_user.try_into()?;
+
+                verified_user
+                    .register_user(context_data.db_pool, context_data.argon2)
+                    .await
+            }
         }?;
 
         let auth_session =
