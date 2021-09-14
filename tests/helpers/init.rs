@@ -10,6 +10,7 @@ use sqlx::{Connection, Executor, PgConnection, PgPool};
 use std::sync::Arc;
 use uuid::Uuid;
 
+/// Configures test database for use.
 pub async fn configure_database(config: &DatabaseSettings) -> PgPool {
     let mut connection = PgConnection::connect_with(&config.without_db())
         .await
@@ -32,6 +33,7 @@ pub async fn configure_database(config: &DatabaseSettings) -> PgPool {
     pool
 }
 
+/// Contains info needed to test app, as well as some convienece methods for common test cases.
 pub struct TestApp {
     pub cookie_jar: Arc<Jar>,
     pub client: Client,
@@ -39,6 +41,7 @@ pub struct TestApp {
     pub db_pool: PgPool,
 }
 
+/// Creates test app and returns info about it.
 pub async fn spawn_app() -> TestApp {
     let listener = TcpListener::bind("localhost:0").expect("Failed to bind listener");
     let port = listener.local_addr().unwrap().port();

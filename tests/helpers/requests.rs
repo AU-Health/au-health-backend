@@ -5,6 +5,7 @@ use reqwest::{cookie::CookieStore, Url};
 use super::init::TestApp;
 
 impl<'a> TestApp {
+    /// Uses reqwest client to send GQL request. Fails on errors & returns the unwrapped data.
     pub async fn send_graphql_request<A: 'a>(&self, query: Operation<'a, A>) -> A {
         let response = self
             .client
@@ -22,6 +23,7 @@ impl<'a> TestApp {
         response.data.unwrap()
     }
 
+    /// Checks if the authorization cookie is present in the cookie jar.
     pub fn auth_cookie_present(&self) -> bool {
         let cookie_url = Url::parse(&self.address).expect("failed to parse url");
 
