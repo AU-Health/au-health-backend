@@ -74,6 +74,7 @@ impl AuthSessionCookie {
 }
 
 #[async_trait]
+/// Just to add easy get_user_id method to Session.
 pub trait GetUserId {
     async fn get_user_id(&self) -> Result<Uuid, Error>;
 }
