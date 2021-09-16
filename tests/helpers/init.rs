@@ -2,7 +2,7 @@ use std::net::TcpListener;
 
 use async_redis_session::RedisSessionStore;
 use au_health_backend::{
-    configuration::{get_configuration, DatabaseSettings},
+    configuration::{get_configuration, PostgresSettings},
     startup::run,
 };
 use reqwest::{cookie::Jar, Client};
@@ -11,7 +11,7 @@ use std::sync::Arc;
 use uuid::Uuid;
 
 /// Configures test database for use.
-pub async fn configure_database(config: &DatabaseSettings) -> PgPool {
+pub async fn configure_database(config: &PostgresSettings) -> PgPool {
     let mut connection = PgConnection::connect_with(&config.without_db())
         .await
         .expect("Failed to connect to Postgres");
@@ -48,8 +48,8 @@ pub async fn spawn_app() -> TestApp {
     let address = format!("http://localhost:{}", port);
 
     let mut config = get_configuration().expect("Failed to get configuration");
-    config.database.database_name = Uuid::new_v4().to_string();
-    let db_pool = configure_database(&config.database).await;
+    config.database.postgres.database_name = Uuid::new_v4().to_string();
+    let db_pool = configure_database(&config.database.postgres).await;
 
     let session_store =
         RedisSessionStore::new("redis://127.0.0.1/").expect("Failed to connect to Redis");

@@ -4,8 +4,10 @@ application:
   graphql:
     path: "/graphql"
 database:
-  host: "localhost"
-  port: 5432
-  username: "postgres"
-  password: "password"
-  database_name: "wellness"
+  postgres:
+    port: 5432
+    username: "postgres"
+    password: "password"
+    database_name: "wellness"
+  redis:
+    port: 6379

@@ -1,7 +1,7 @@
 {
   "db": "PostgreSQL",
-  "055f8d8500616b5f422916eea66eb9024278a814290f3985f198a126f98189bb": {
-    "query": "SELECT id, username, password, created_at, updated_at\n    FROM users\n    WHERE username = $1\n    LIMIT 1;",
+  "270fc9a08b92aeaabe8a455b274992fa05cb7e63c17be20d5856642da85b26b7": {
+    "query": "INSERT INTO users (id, email, password, created_at, updated_at) \n        VALUES ($1, $2, $3, $4, $5) \n        RETURNING *;",
     "describe": {
       "columns": [
         {
@@ -11,7 +11,7 @@
         },
         {
           "ordinal": 1,
-          "name": "username",
+          "name": "email",
           "type_info": "Text"
         },
         {
@@ -32,7 +32,11 @@
       ],
       "parameters": {
         "Left": [
-          "Text"
+          "Uuid",
+          "Text",
+          "Text",
+          "Timestamptz",
+          "Timestamptz"
         ]
       },
       "nullable": [
@@ -44,8 +48,8 @@
       ]
     }
   },
-  "56b273aa9413a8a2156ce0f68f7c1c2576a16905b19c927bee7b0a833dc83f5f": {
-    "query": "SELECT id, username, password, created_at, updated_at\n        FROM users\n        WHERE id = $1\n        LIMIT 1;",
+  "aa824cc3d5cd98e2f93b016cbfa6aadeb2a90df02f29dfb348db05ae897786c8": {
+    "query": "SELECT id, email, password, created_at, updated_at\n        FROM users\n        WHERE id = $1\n        LIMIT 1;",
     "describe": {
       "columns": [
         {
@@ -55,7 +59,7 @@
         },
         {
           "ordinal": 1,
-          "name": "username",
+          "name": "email",
           "type_info": "Text"
         },
         {
@@ -88,8 +92,8 @@
       ]
     }
   },
-  "c912bd785c2aa22e8a83edacabfa5e1aa26393c3f73cc692624846f97478ac32": {
-    "query": "INSERT INTO users (id, username, password, created_at, updated_at) \n    VALUES ($1, $2, $3, $4, $5) \n    RETURNING *;",
+  "bf27d5ccd4687852c346385e8de12d9ddc986b363d2c2f329f97a161fc0b4bd8": {
+    "query": "SELECT id, email, password, created_at, updated_at\n        FROM users\n        WHERE email = $1\n        LIMIT 1;",
     "describe": {
       "columns": [
         {
@@ -99,7 +103,7 @@
         },
         {
           "ordinal": 1,
-          "name": "username",
+          "name": "email",
           "type_info": "Text"
         },
         {
@@ -120,11 +124,7 @@
       ],
       "parameters": {
         "Left": [
-          "Uuid",
-          "Text",
-          "Text",
-          "Timestamptz",
-          "Timestamptz"
+          "Text"
         ]
       },
       "nullable": [

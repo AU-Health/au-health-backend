@@ -10,6 +10,9 @@ use axum::{
     routing::BoxRoute,
     AddExtensionLayer, Router,
 };
+use headers::{AccessControlAllowOrigin, HeaderMapExt};
+use http::Response;
+use hyper::Body;
 
 use crate::{auth::AuthSessionCookie, configuration::GraphQlSettings, gql::schema::GqlSchema};
 
@@ -23,11 +26,19 @@ async fn graphql_handler(
     schema: Extension<GqlSchema>,
     graphql_req: GraphQLRequest,
     auth_cookies: Option<AuthSessionCookie>,
-) -> GraphQLResponse {
-    schema
+) -> Response<Body> {
+    let gql_resp: GraphQLResponse = schema
         .execute(graphql_req.into_inner().data(auth_cookies))
         .await
-        .into()
+        .into();
+
+    let mut response = gql_resp.into_response();
+
+    response
+        .headers_mut()
+        .typed_insert(AccessControlAllowOrigin::ANY);
+
+    response
 }
 
 async fn forbidden_response() -> impl IntoResponse {

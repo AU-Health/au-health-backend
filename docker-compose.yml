@@ -23,3 +23,11 @@ services:
       interval: 1s
       timeout: 3s
       retries: 30
+  server:
+    build: ./
+    env_file: .env
+    depends_on:
+      - postgres
+      - redis
+    ports:
+      - 8000:8000

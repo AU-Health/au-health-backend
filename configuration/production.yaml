@@ -2,4 +2,8 @@ application:
   graphql:
     playground_enabled: false
 database:
-  require_ssl: true
+  postgres:
+    host: "postgres"
+    require_ssl: false
+  redis:
+    host: "redis"

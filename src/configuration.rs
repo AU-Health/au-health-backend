@@ -30,7 +30,14 @@ pub struct Settings {
 }
 
 #[derive(serde::Deserialize)]
+
 pub struct DatabaseSettings {
+    pub postgres: PostgresSettings,
+    pub redis: RedisSettings,
+}
+
+#[derive(serde::Deserialize)]
+pub struct PostgresSettings {
     pub username: String,
     pub password: String,
     #[serde(deserialize_with = "deserialize_number_from_string")]
@@ -40,7 +47,22 @@ pub struct DatabaseSettings {
     pub require_ssl: bool,
 }
 
-impl DatabaseSettings {
+#[derive(serde::Deserialize)]
+pub struct RedisSettings {
+    host: String,
+    port: String,
+}
+
+impl RedisSettings {
+    pub fn with_port(&self) -> String {
+        format!("{}:{}", self.without_port(), self.port)
+    }
+    pub fn without_port(&self) -> String {
+        format!("redis://{}", self.host)
+    }
+}
+
+impl PostgresSettings {
     pub fn with_db(&self) -> PgConnectOptions {
         self.without_db().database(&self.database_name)
     }

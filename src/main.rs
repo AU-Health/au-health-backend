@@ -17,11 +17,12 @@ async fn main() {
 
     let connection_pool = PgPoolOptions::new()
         .connect_timeout(Duration::from_secs(2))
-        .connect_with(configuration.database.with_db())
+        .connect_with(configuration.database.postgres.with_db())
         .await
         .expect("Failed to connect to Postgres");
 
-    let store = RedisSessionStore::new("redis://127.0.0.1/").expect("Failed to connect to Redis");
+    let store = RedisSessionStore::new(configuration.database.redis.with_port())
+        .expect("Failed to connect to Redis");
 
     let address = format!(
         "{}:{}",
