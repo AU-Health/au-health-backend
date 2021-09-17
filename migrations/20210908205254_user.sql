@@ -1,7 +1,7 @@
 -- Add migration script here
 
 -- Create User Table
-CREATE TABLE users(
+CREATE TABLE user_account (
     id uuid NOT NULL PRIMARY KEY,
     email TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,

@@ -22,7 +22,7 @@ impl LoginUser {
         let user = sqlx::query_as!(
             User,
             "SELECT id, email, password, created_at, updated_at
-        FROM users
+        FROM user_account
         WHERE email = $1
         LIMIT 1;",
             self.email
@@ -74,7 +74,7 @@ impl User {
         let user = sqlx::query_as!(
             User,
             "SELECT id, email, password, created_at, updated_at
-        FROM users
+        FROM user_account
         WHERE id = $1
         LIMIT 1;",
             user_id

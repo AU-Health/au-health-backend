@@ -94,7 +94,7 @@ impl VerifiedNewUser {
 
         let user = sqlx::query_as!(
             User,
-            "INSERT INTO users (id, email, password, created_at, updated_at) 
+            "INSERT INTO user_account (id, email, password, created_at, updated_at) 
         VALUES ($1, $2, $3, $4, $5) 
         RETURNING *;",
             Uuid::new_v4(),

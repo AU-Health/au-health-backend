@@ -37,10 +37,7 @@ where
 
 impl AuthSessionCookie {
     /// Creates user session.
-    pub async fn create_session(
-        user: &User,
-        session_store: &RedisSessionStore,
-    ) -> Result<Self, Error> {
+    pub async fn new(user: &User, session_store: &RedisSessionStore) -> Result<Self, Error> {
         let mut session = Session::new();
         session
             .insert(USER_ID_SESSION_KEY, user.id)
@@ -65,11 +62,21 @@ impl AuthSessionCookie {
     }
 
     /// Load actual session from Redis/Session Store.
-    pub async fn load_session(
-        &self,
-        session_store: &RedisSessionStore,
-    ) -> Result<Option<Session>, async_session::Error> {
-        session_store.load_session(self.cookie_value.clone()).await
+    pub async fn load_session(&self, session_store: &RedisSessionStore) -> Result<Session, Error> {
+        Ok(session_store
+            .load_session(self.cookie_value.clone())
+            .await
+            .map_err(|e| Error::new(e.to_string()))?
+            .ok_or_else(|| Error::new("Session present but not found on Redis"))?)
+    }
+
+    /// Get User ID from Session. Convienece method if you don't need the whole session object returned by `load_session`.
+    pub async fn get_user_id(&self, session_store: &RedisSessionStore) -> Result<Uuid, Error> {
+        Ok(self
+            .load_session(session_store)
+            .await?
+            .get_user_id()
+            .await?)
     }
 }
 

@@ -1,7 +1,7 @@
 {
   "db": "PostgreSQL",
-  "270fc9a08b92aeaabe8a455b274992fa05cb7e63c17be20d5856642da85b26b7": {
-    "query": "INSERT INTO users (id, email, password, created_at, updated_at) \n        VALUES ($1, $2, $3, $4, $5) \n        RETURNING *;",
+  "1379d0a77cc3d2116cd17f7d4583dfad14a558ec663a54130f9ed074ce744f75": {
+    "query": "INSERT INTO user_account (id, email, password, created_at, updated_at) \n        VALUES ($1, $2, $3, $4, $5) \n        RETURNING *;",
     "describe": {
       "columns": [
         {
@@ -48,8 +48,8 @@
       ]
     }
   },
-  "aa824cc3d5cd98e2f93b016cbfa6aadeb2a90df02f29dfb348db05ae897786c8": {
-    "query": "SELECT id, email, password, created_at, updated_at\n        FROM users\n        WHERE id = $1\n        LIMIT 1;",
+  "545ede2e1005263dfd61fa8c4426231f659da444a860f33370c2ee1f67f9505c": {
+    "query": "SELECT id, email, password, created_at, updated_at\n        FROM user_account\n        WHERE id = $1\n        LIMIT 1;",
     "describe": {
       "columns": [
         {
@@ -92,8 +92,8 @@
       ]
     }
   },
-  "bf27d5ccd4687852c346385e8de12d9ddc986b363d2c2f329f97a161fc0b4bd8": {
-    "query": "SELECT id, email, password, created_at, updated_at\n        FROM users\n        WHERE email = $1\n        LIMIT 1;",
+  "781e09aae9744f735ffbae86878f7e88c537aaaf5f38894c37115f8613c35177": {
+    "query": "SELECT id, email, password, created_at, updated_at\n        FROM user_account\n        WHERE email = $1\n        LIMIT 1;",
     "describe": {
       "columns": [
         {

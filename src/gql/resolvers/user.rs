@@ -4,7 +4,7 @@ use async_graphql::{Context, Error, Object};
 use http::header::SET_COOKIE;
 
 use crate::{
-    auth::{AuthSessionCookie, GetUserId},
+    auth::AuthSessionCookie,
     domain::{
         user::{LoginUser, User},
         user_registration::{NewUser, VerifiedNewUser},
@@ -25,10 +25,7 @@ impl UserQuery {
             None => Ok(None),
             Some(auth_session_cookie) => {
                 let user_id = auth_session_cookie
-                    .load_session(context_data.session_store)
-                    .await?
-                    .ok_or("Session present but not found on Redis")?
-                    .get_user_id()
+                    .get_user_id(context_data.session_store)
                     .await?;
                 let user = User::query_by_id(context_data.db_pool, user_id).await?;
 
@@ -69,8 +66,7 @@ impl UserMutation {
             }
         }?;
 
-        let auth_session =
-            AuthSessionCookie::create_session(&user, context_data.session_store).await?;
+        let auth_session = AuthSessionCookie::new(&user, context_data.session_store).await?;
 
         auth_session.create_cookie(ctx).await?;
 
@@ -101,8 +97,7 @@ impl UserMutation {
             }
         }?;
 
-        let auth_session =
-            AuthSessionCookie::create_session(&user, context_data.session_store).await?;
+        let auth_session = AuthSessionCookie::new(&user, context_data.session_store).await?;
 
         auth_session.create_cookie(ctx).await?;
 

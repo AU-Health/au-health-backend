@@ -36,7 +36,7 @@ async fn register_works() {
     let db_user = sqlx::query_as!(
         User,
         "SELECT id, email, password, created_at, updated_at
-     FROM users 
+     FROM user_account
      WHERE id = $1 LIMIT 1",
         user_id
     )
