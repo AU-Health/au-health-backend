@@ -7,19 +7,25 @@ pub struct SurveyQuery;
 
 #[Object]
 impl SurveyQuery {
-    async fn create_survey(
+    pub async fn create_survey(
         &self,
         ctx: &Context<'_>,
         #[graphql(desc = "Survey submission")] survey: NewSurvey,
     ) -> Result<bool, Error> {
-        let context_data = ContextData::new(ctx);
+        let context = ContextData::new(ctx);
 
-        match context_data.auth_session_cookie {
+        let cookie = context.session_cookie
+
+        let user_id = context.authorizer.user_id(auth_session_cookie)
+
+        
+
+        match context.session_cookie {
             None => Err(Error::new("Not logged in")),
             Some(cookie) => {
-                let user_id = cookie.get_user_id(context_data.session_store).await?;
+                let user_id = cookie.get_user_id(context.session_store).await?;
 
-                survey.create_survey(context_data.db_pool, user_id).await?;
+                survey.create_survey(context.db_pool, user_id).await?;
 
                 Ok(true)
             }

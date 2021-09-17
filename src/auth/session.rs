@@ -6,17 +6,16 @@ use async_trait::async_trait;
 use axum::extract::{FromRequest, RequestParts, TypedHeader};
 use headers::Cookie;
 use http::header::SET_COOKIE;
-use uuid::Uuid;
 
 pub const AUTH_COOKIE_NAME: &str = "auth";
 pub const USER_ID_SESSION_KEY: &str = "user_id";
 
-pub struct AuthSessionCookie {
-    pub cookie_value: String,
+pub struct SessionCookie {
+    pub value: String,
 }
 
 #[async_trait]
-impl<B> FromRequest<B> for AuthSessionCookie
+impl<B> FromRequest<B> for SessionCookie
 where
     B: Send,
 {
@@ -35,24 +34,9 @@ where
     }
 }
 
-impl AuthSessionCookie {
-    /// Creates user session.
-    pub async fn new(user: &User, session_store: &RedisSessionStore) -> Result<Self, Error> {
-        let mut session = Session::new();
-        session
-            .insert(USER_ID_SESSION_KEY, user.id)
-            .map_err(|err| Error::new(format!("Unable to create user session: {:?}", err)))?;
-
-        let cookie_value = session_store
-            .store_session(session)
-            .await?
-            .ok_or("Cookie value empty")?;
-
-        Ok(Self { cookie_value })
-    }
-
+impl SessionCookie {
     /// Uses GQL Context to set session cookie on the browser.
-    pub async fn create_cookie(&self, ctx: &Context<'_>) -> Result<(), Error> {
+    pub async fn set_cookie(&self, ctx: &Context<'_>) -> Result<(), Error> {
         ctx.append_http_header(
             SET_COOKIE,
             format!("{}={}; SameSite=Lax", AUTH_COOKIE_NAME, self.cookie_value),
@@ -68,31 +52,5 @@ impl AuthSessionCookie {
             .await
             .map_err(|e| Error::new(e.to_string()))?
             .ok_or_else(|| Error::new("Session present but not found on Redis"))?)
-    }
-
-    /// Get User ID from Session. Convienece method if you don't need the whole session object returned by `load_session`.
-    pub async fn get_user_id(&self, session_store: &RedisSessionStore) -> Result<Uuid, Error> {
-        Ok(self
-            .load_session(session_store)
-            .await?
-            .get_user_id()
-            .await?)
-    }
-}
-
-#[async_trait]
-/// Just to add easy get_user_id method to Session.
-pub trait GetUserId {
-    async fn get_user_id(&self) -> Result<Uuid, Error>;
-}
-
-#[async_trait]
-impl GetUserId for Session {
-    async fn get_user_id(&self) -> Result<Uuid, Error> {
-        let user_id = self
-            .get::<Uuid>("user_id")
-            .ok_or("User ID not set in Session")?;
-
-        Ok(user_id)
     }
 }

@@ -3,13 +3,13 @@ use async_graphql::Context;
 use async_redis_session::RedisSessionStore;
 use sqlx::{Pool, Postgres};
 
-use crate::auth::AuthSessionCookie;
+use crate::auth::{Authorizer, SessionCookie};
 
 pub struct ContextData<'a> {
     pub db_pool: &'a Pool<Postgres>,
     pub argon2: &'a Argon2<'a>,
-    pub auth_session_cookie: &'a Option<AuthSessionCookie>,
-    pub session_store: &'a RedisSessionStore,
+    pub session_cookie: &'a Option<SessionCookie>,
+    pub authorizer: Authorizer<'a>,
 }
 
 impl<'a> ContextData<'a> {
@@ -22,14 +22,16 @@ impl<'a> ContextData<'a> {
             .expect("Session store not found in Context");
         let argon2 = ctx.data::<Argon2>().expect("Argon2 not found in Context");
         let auth_session_cookie = ctx
-            .data::<Option<AuthSessionCookie>>()
+            .data::<Option<SessionCookie>>()
             .expect("Auth Cookie Option not found in Context");
+
+        let authorizer = Authorizer { session_store };
 
         Self {
             db_pool,
             argon2,
-            auth_session_cookie,
-            session_store,
+            session_cookie: auth_session_cookie,
+            authorizer,
         }
     }
 }

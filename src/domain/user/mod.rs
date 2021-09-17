@@ -1,5 +1,8 @@
+mod registration;
+pub use registration::*;
+
 use argon2::{Argon2, PasswordHash};
-use async_graphql::{Error, InputObject, SimpleObject};
+use async_graphql::{Enum, Error, InputObject, SimpleObject};
 use chrono::{DateTime, Utc};
 use sqlx::{Pool, Postgres};
 use uuid::Uuid;
@@ -21,10 +24,10 @@ impl LoginUser {
     ) -> Result<User, Error> {
         let user = sqlx::query_as!(
             User,
-            "SELECT id, email, password, created_at, updated_at
+            r#"SELECT id, email, password, created_at, updated_at, role as "role: _"
         FROM user_account
         WHERE email = $1
-        LIMIT 1;",
+        LIMIT 1;"#,
             self.email
         )
         .fetch_one(pool)
@@ -46,6 +49,14 @@ impl LoginUser {
     }
 }
 
+#[non_exhaustive]
+#[derive(Enum, Copy, Clone, Eq, PartialEq, Debug, sqlx::Type)]
+#[sqlx(type_name = "USER_ROLE", rename_all = "snake_case")]
+pub enum Role {
+    User,
+    Admin,
+}
+
 #[derive(SimpleObject, Debug)]
 /// User with all fields attached. Returned from DB.
 pub struct User {
@@ -55,6 +66,7 @@ pub struct User {
     pub password: String,
     pub created_at: DateTime<Utc>,
     pub updated_at: DateTime<Utc>,
+    pub role: Role,
 }
 
 impl User {
@@ -73,10 +85,10 @@ impl User {
     pub async fn query_by_id(pool: &Pool<Postgres>, user_id: Uuid) -> Result<Self, Error> {
         let user = sqlx::query_as!(
             User,
-            "SELECT id, email, password, created_at, updated_at
+            r#"SELECT id, email, password, created_at, updated_at, role as "role: _"
         FROM user_account
         WHERE id = $1
-        LIMIT 1;",
+        LIMIT 1;"#,
             user_id
         )
         .fetch_one(pool)

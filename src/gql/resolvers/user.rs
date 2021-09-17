@@ -4,11 +4,7 @@ use async_graphql::{Context, Error, Object};
 use http::header::SET_COOKIE;
 
 use crate::{
-    auth::AuthSessionCookie,
-    domain::{
-        user::{LoginUser, User},
-        user_registration::{NewUser, VerifiedNewUser},
-    },
+    domain::user::{LoginUser, NewUser, User, VerifiedNewUser},
     gql::context::ContextData,
 };
 
@@ -19,15 +15,13 @@ pub struct UserQuery;
 impl UserQuery {
     /// Checks for the currently logged in user by parsing the cookie.
     async fn me(&self, ctx: &Context<'_>) -> Result<Option<User>, Error> {
-        let context_data = ContextData::new(ctx);
+        let context = ContextData::new(ctx);
 
-        match context_data.auth_session_cookie {
+        match context.session_cookie {
             None => Ok(None),
             Some(auth_session_cookie) => {
-                let user_id = auth_session_cookie
-                    .get_user_id(context_data.session_store)
-                    .await?;
-                let user = User::query_by_id(context_data.db_pool, user_id).await?;
+                let user_id = context.authorizer.user_id(auth_session_cookie).await?;
+                let user = User::query_by_id(context.db_pool, user_id).await?;
 
                 Ok(Some(user))
             }
@@ -50,25 +44,24 @@ impl UserMutation {
         ctx: &Context<'_>,
         #[graphql(desc = "Login User credentials")] login_user: LoginUser,
     ) -> Result<User, Error> {
-        let context_data = ContextData::new(ctx);
+        let context = ContextData::new(ctx);
 
-        let is_logged_in = context_data
-            .auth_session_cookie
+        let is_logged_in = context
+            .session_cookie
             .as_ref()
             .map_or_else(|| false, |_auth| true);
 
         let user = match is_logged_in {
             true => Err(logged_in_error()),
-            false => {
-                login_user
-                    .login_user(context_data.db_pool, context_data.argon2)
-                    .await
-            }
+            false => login_user.login_user(context.db_pool, context.argon2).await,
         }?;
 
-        let auth_session = AuthSessionCookie::new(&user, context_data.session_store).await?;
-
-        auth_session.create_cookie(ctx).await?;
+        context
+            .authorizer
+            .create_session(&user)
+            .await?
+            .set_cookie(ctx)
+            .await?;
 
         Ok(user)
     }
@@ -79,10 +72,10 @@ impl UserMutation {
         ctx: &Context<'_>,
         #[graphql(desc = "New User information")] new_user: NewUser,
     ) -> Result<User, Error> {
-        let context_data = ContextData::new(ctx);
+        let context = ContextData::new(ctx);
 
-        let is_logged_in = context_data
-            .auth_session_cookie
+        let is_logged_in = context
+            .session_cookie
             .as_ref()
             .map_or_else(|| false, |_auth| true);
 
@@ -92,14 +85,17 @@ impl UserMutation {
                 let verified_user: VerifiedNewUser = new_user.try_into()?;
 
                 verified_user
-                    .register_user(context_data.db_pool, context_data.argon2)
+                    .register_user(context.db_pool, context.argon2)
                     .await
             }
         }?;
 
-        let auth_session = AuthSessionCookie::new(&user, context_data.session_store).await?;
-
-        auth_session.create_cookie(ctx).await?;
+        context
+            .authorizer
+            .create_session(&user)
+            .await?
+            .set_cookie(ctx)
+            .await?;
 
         Ok(user)
     }
