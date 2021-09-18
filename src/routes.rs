@@ -14,7 +14,7 @@ use headers::{AccessControlAllowOrigin, HeaderMapExt};
 use http::Response;
 use hyper::Body;
 
-use crate::{auth::SessionCookie, configuration::GraphQlSettings, gql::schema::GqlSchema};
+use crate::{configuration::GraphQlSettings, gql::schema::GqlSchema, session::SessionCookie};
 
 /// initalize GraphQL Playground UI for testing.
 async fn graphql_playground() -> impl IntoResponse {

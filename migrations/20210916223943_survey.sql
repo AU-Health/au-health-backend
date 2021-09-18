@@ -14,7 +14,7 @@ CREATE TABLE response_type (
     id uuid NOT NULL PRIMARY KEY,
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL,
-    type TEXT UNIQUE NOT NULL
+    response_type TEXT UNIQUE NOT NULL
 );
 
 CREATE TABLE question_category (
@@ -45,4 +45,6 @@ CREATE TABLE answer (
     FOREIGN KEY (survey_id) REFERENCES survey(id) ON DELETE CASCADE,
     FOREIGN KEY (question_id) REFERENCES question(id) ON DELETE CASCADE
 );
+
+INSERT INTO response_type (id, created_at, updated_at, response_type) VALUES (gen_random_uuid(), CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'text');
 

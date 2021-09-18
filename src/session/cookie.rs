@@ -1,4 +1,3 @@
-use crate::domain::user::User;
 use async_graphql::{Context, Error};
 use async_redis_session::RedisSessionStore;
 use async_session::{Session, SessionStore};
@@ -7,8 +6,7 @@ use axum::extract::{FromRequest, RequestParts, TypedHeader};
 use headers::Cookie;
 use http::header::SET_COOKIE;
 
-pub const AUTH_COOKIE_NAME: &str = "auth";
-pub const USER_ID_SESSION_KEY: &str = "user_id";
+use super::AUTH_COOKIE_NAME;
 
 pub struct SessionCookie {
     pub value: String,
@@ -29,7 +27,7 @@ where
                 .get(AUTH_COOKIE_NAME)
                 .map(|s| s.to_string())
                 .ok_or_else(|| "Auth cookie not set".to_string())
-                .map(|s| Self { cookie_value: s }),
+                .map(|s| Self { value: s }),
         }
     }
 }
@@ -39,7 +37,7 @@ impl SessionCookie {
     pub async fn set_cookie(&self, ctx: &Context<'_>) -> Result<(), Error> {
         ctx.append_http_header(
             SET_COOKIE,
-            format!("{}={}; SameSite=Lax", AUTH_COOKIE_NAME, self.cookie_value),
+            format!("{}={}; SameSite=Lax", AUTH_COOKIE_NAME, self.value),
         );
 
         Ok(())
@@ -48,7 +46,7 @@ impl SessionCookie {
     /// Load actual session from Redis/Session Store.
     pub async fn load_session(&self, session_store: &RedisSessionStore) -> Result<Session, Error> {
         Ok(session_store
-            .load_session(self.cookie_value.clone())
+            .load_session(self.value.clone())
             .await
             .map_err(|e| Error::new(e.to_string()))?
             .ok_or_else(|| Error::new("Session present but not found on Redis"))?)

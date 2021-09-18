@@ -1,9 +1,10 @@
 mod registration;
 pub use registration::*;
-
+mod role;
 use argon2::{Argon2, PasswordHash};
-use async_graphql::{Enum, Error, InputObject, SimpleObject};
+use async_graphql::{Error, InputObject, SimpleObject};
 use chrono::{DateTime, Utc};
+pub use role::*;
 use sqlx::{Pool, Postgres};
 use uuid::Uuid;
 
@@ -48,15 +49,6 @@ impl LoginUser {
         }
     }
 }
-
-#[non_exhaustive]
-#[derive(Enum, Copy, Clone, Eq, PartialEq, Debug, sqlx::Type)]
-#[sqlx(type_name = "USER_ROLE", rename_all = "snake_case")]
-pub enum Role {
-    User,
-    Admin,
-}
-
 #[derive(SimpleObject, Debug)]
 /// User with all fields attached. Returned from DB.
 pub struct User {

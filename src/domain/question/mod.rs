@@ -1,4 +1,7 @@
-use async_graphql::InputObject;
+use async_graphql::{Error, InputObject};
+use chrono::{DateTime, Utc};
+use sqlx::{Pool, Postgres};
+use uuid::Uuid;
 
 #[derive(InputObject)]
 pub struct NewQuestion {
@@ -6,4 +9,48 @@ pub struct NewQuestion {
     pub category: String,
     pub response_type: String,
     pub responses: Option<Vec<String>>,
+}
+
+pub struct Question {
+    pub id: Uuid,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+    pub question: String,
+    pub category_id: Uuid,
+    pub response_type_id: Uuid,
+}
+
+pub struct Category {
+    pub id: Uuid,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+    pub name: String,
+}
+
+pub struct ResponseType {
+    pub id: Uuid,
+    pub created_at: DateTime<Utc>,
+    pub updated_at: DateTime<Utc>,
+    pub response_type: String,
+}
+
+impl NewQuestion {
+    pub async fn create_question(self, pool: &Pool<Postgres>) -> Result<Question, Error> {
+        let category_query = sqlx::query_as!(Category, "SELECT id, created_at, updated_at, name FROM question_category WHERE name = $1 LIMIT 1;", self.category).fetch_one(pool).await;
+
+        let category = match category_query {
+            Ok(cat) => Ok(cat),
+            Err(e) => {
+                sqlx::query_as!(Category, "INSERT INTO question_category (id, created_at, updated_at, name) VALUES ($1, $2, $3, $4) RETURNING *;", Uuid::new_v4(), Utc::now(), Utc::now(), self.category).fetch_one(pool).await
+            }
+        }?;
+
+        let response_type = sqlx::
+
+        sqlx::query_as!(Question, "INSERT INTO question (id, created_at, updated_at, question, category_id, response_type_id) 
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING *;", Uuid::new_v4(), Utc::now(), Utc::now(), self.question, );
+
+        todo!()
+    }
 }
