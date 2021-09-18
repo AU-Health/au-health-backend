@@ -1,7 +1,7 @@
 {
   "db": "PostgreSQL",
-  "1379d0a77cc3d2116cd17f7d4583dfad14a558ec663a54130f9ed074ce744f75": {
-    "query": "INSERT INTO user_account (id, email, password, created_at, updated_at) \n        VALUES ($1, $2, $3, $4, $5) \n        RETURNING *;",
+  "1f09c056ff3ed5115f46012d56df9fa8bea7e2f6116683c167e2de3f8fd9e8d6": {
+    "query": "SELECT id, email, password, created_at, updated_at, role as \"role: _\"\n        FROM user_account\n        WHERE id = $1\n        LIMIT 1;",
     "describe": {
       "columns": [
         {
@@ -28,54 +28,21 @@
           "ordinal": 4,
           "name": "updated_at",
           "type_info": "Timestamptz"
-        }
-      ],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Text",
-          "Text",
-          "Timestamptz",
-          "Timestamptz"
-        ]
-      },
-      "nullable": [
-        false,
-        false,
-        false,
-        false,
-        false
-      ]
-    }
-  },
-  "545ede2e1005263dfd61fa8c4426231f659da444a860f33370c2ee1f67f9505c": {
-    "query": "SELECT id, email, password, created_at, updated_at\n        FROM user_account\n        WHERE id = $1\n        LIMIT 1;",
-    "describe": {
-      "columns": [
-        {
-          "ordinal": 0,
-          "name": "id",
-          "type_info": "Uuid"
         },
         {
-          "ordinal": 1,
-          "name": "email",
-          "type_info": "Text"
-        },
-        {
-          "ordinal": 2,
-          "name": "password",
-          "type_info": "Text"
-        },
-        {
-          "ordinal": 3,
-          "name": "created_at",
-          "type_info": "Timestamptz"
-        },
-        {
-          "ordinal": 4,
-          "name": "updated_at",
-          "type_info": "Timestamptz"
+          "ordinal": 5,
+          "name": "role: _",
+          "type_info": {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "user",
+                  "admin"
+                ]
+              }
+            }
+          }
         }
       ],
       "parameters": {
@@ -88,12 +55,71 @@
         false,
         false,
         false,
+        false,
         false
       ]
     }
   },
-  "781e09aae9744f735ffbae86878f7e88c537aaaf5f38894c37115f8613c35177": {
-    "query": "SELECT id, email, password, created_at, updated_at\n        FROM user_account\n        WHERE email = $1\n        LIMIT 1;",
+  "63c2a5ddd9b1ffa0a84e16f0a109d4068016f43c9ff647edcd76496ff1594226": {
+    "query": "INSERT INTO question_category (id, created_at, updated_at, name) VALUES ($1, $2, $3, $4) RETURNING *;",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "updated_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 3,
+          "name": "name",
+          "type_info": "Text"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Timestamptz",
+          "Timestamptz",
+          "Text"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "8951e1c68dd557ad0b5f14de7960c21d7b6d21ef478e8ab2a3d0467a5040cb09": {
+    "query": "INSERT INTO answer (id, created_at, updated_at, answer, survey_id, question_id) \n            VALUES ($1, $2, $3, $4, $5, $6);",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Timestamptz",
+          "Timestamptz",
+          "Text",
+          "Uuid",
+          "Uuid"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "8bd4d96a9366d1be0027a2016990ad692aa77f8513d0f3ac59be6cadf32c3423": {
+    "query": "INSERT INTO user_account (id, email, password, created_at, updated_at, role) \n        VALUES ($1, $2, $3, $4, $5, $6) \n        RETURNING id, email, password, created_at, updated_at, role as \"role: _\";",
     "describe": {
       "columns": [
         {
@@ -120,6 +146,96 @@
           "ordinal": 4,
           "name": "updated_at",
           "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 5,
+          "name": "role: _",
+          "type_info": {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "user",
+                  "admin"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Text",
+          "Text",
+          "Timestamptz",
+          "Timestamptz",
+          {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "user",
+                  "admin"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "8d3e2feebb14461fd6bfcbaed1838458c8f568570aa031412e8ea3028e1d856f": {
+    "query": "SELECT id, email, password, created_at, updated_at, role as \"role: _\"\n        FROM user_account\n        WHERE email = $1\n        LIMIT 1;",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "email",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 2,
+          "name": "password",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 3,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 4,
+          "name": "updated_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 5,
+          "name": "role: _",
+          "type_info": {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "user",
+                  "admin"
+                ]
+              }
+            }
+          }
         }
       ],
       "parameters": {
@@ -129,6 +245,179 @@
       },
       "nullable": [
         false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "a8998adf2cdba4cc23f8554b3a9b1f3e314316cec35d1329e2ff2aab11bcfc0a": {
+    "query": "INSERT INTO question (id, created_at, updated_at, question, category_id, response_type_id) \n        VALUES ($1, $2, $3, $4, $5, $6)\n        RETURNING *;",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "updated_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 3,
+          "name": "question",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 4,
+          "name": "category_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 5,
+          "name": "response_type_id",
+          "type_info": "Uuid"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Timestamptz",
+          "Timestamptz",
+          "Text",
+          "Uuid",
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "acde09f76c9dd469ba578764831919a4b24395654afdbb07cce8dfcfe1e416fa": {
+    "query": "SELECT id, created_at, updated_at, response_type FROM response_type WHERE response_type = $1 LIMIT 1;",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "updated_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 3,
+          "name": "response_type",
+          "type_info": "Text"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "c241f07c72b5ca29e29771601bff51078c3546e38a70464d1229a5b1ba2f7d11": {
+    "query": "SELECT id, created_at, updated_at, name FROM question_category WHERE name = $1 LIMIT 1;",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 2,
+          "name": "updated_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 3,
+          "name": "name",
+          "type_info": "Text"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "dc4c75479725e402ff7eaaef7a7b93a193d8a48a584f902d390c6e64e6391995": {
+    "query": "INSERT INTO survey (id, user_id, created_at, updated_at)\n        VALUES ($1, $2, $3, $4)\n        RETURNING *;",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "user_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 2,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 3,
+          "name": "updated_at",
+          "type_info": "Timestamptz"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Uuid",
+          "Timestamptz",
+          "Timestamptz"
+        ]
+      },
+      "nullable": [
         false,
         false,
         false,
