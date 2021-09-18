@@ -1,5 +1,5 @@
 -- Add migration script here
-CREATE TYPE USER_ROLE AS ENUM ('User', 'Admin');
+CREATE TYPE USER_ROLE AS ENUM ('user', 'admin');
 
 
 -- Create User Table

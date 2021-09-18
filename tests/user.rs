@@ -40,7 +40,7 @@ async fn register_works() {
         User,
         r#"SELECT id, email, password, created_at, updated_at, role as "role: _"
      FROM user_account
-     WHERE id = $1 LIMIT 1"#,
+     WHERE id = $1 LIMIT 1;"#,
         user_id
     )
     .fetch_one(&app.db_pool)
