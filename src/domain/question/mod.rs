@@ -40,17 +40,17 @@ impl NewQuestion {
 
         let category = match category_query {
             Ok(cat) => Ok(cat),
-            Err(e) => {
+            Err(_) => {
                 sqlx::query_as!(Category, "INSERT INTO question_category (id, created_at, updated_at, name) VALUES ($1, $2, $3, $4) RETURNING *;", Uuid::new_v4(), Utc::now(), Utc::now(), self.category).fetch_one(pool).await
             }
         }?;
 
-        let response_type = sqlx::
+        let response_type = sqlx::query_as!(ResponseType, "SELECT id, created_at, updated_at, response_type FROM response_type WHERE response_type = $1 LIMIT 1;", self.response_type).fetch_one(pool).await?;
 
-        sqlx::query_as!(Question, "INSERT INTO question (id, created_at, updated_at, question, category_id, response_type_id) 
+        let question = sqlx::query_as!(Question, "INSERT INTO question (id, created_at, updated_at, question, category_id, response_type_id) 
         VALUES ($1, $2, $3, $4, $5, $6)
-        RETURNING *;", Uuid::new_v4(), Utc::now(), Utc::now(), self.question, );
+        RETURNING *;", Uuid::new_v4(), Utc::now(), Utc::now(), self.question, category.id, response_type.id).fetch_one(pool).await?;
 
-        todo!()
+        Ok(question)
     }
 }
