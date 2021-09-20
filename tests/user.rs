@@ -11,7 +11,6 @@ use cynic::{MutationBuilder, Operation};
 use gql::gql_schema::queries::{
     Login, LoginArguments, LoginUser, NewUser, Register, RegisterArguments,
 };
-use helpers::spawn_app;
 pub use helpers::*;
 use uuid::Uuid;
 
@@ -19,7 +18,7 @@ use crate::gql::gql_schema::queries::Logout;
 
 #[tokio::test]
 async fn register_works() {
-    let app = spawn_app().await;
+    let app = TestApp::new().await;
 
     let user = NewUser {
         email: "mw3915a@student.american.edu".to_string(),
@@ -52,7 +51,7 @@ async fn register_works() {
 
 #[tokio::test]
 async fn login_works() {
-    let app = spawn_app().await;
+    let app = TestApp::new().await;
 
     let user = domain::user::NewUser {
         email: "mw3915a@student.american.edu".to_string(),
@@ -84,7 +83,7 @@ async fn login_works() {
 
 #[tokio::test]
 async fn logout_works() {
-    let app = spawn_app().await;
+    let app = TestApp::new().await;
 
     let user = NewUser {
         email: "mw3915a@student.american.edu".to_string(),

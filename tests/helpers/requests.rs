@@ -2,7 +2,7 @@ use cynic::{http::ReqwestExt, Operation};
 use regex::Regex;
 use reqwest::{cookie::CookieStore, Url};
 
-use super::init::TestApp;
+use super::test_app::TestApp;
 
 impl<'a> TestApp {
     /// Uses reqwest client to send GQL request. Fails on errors & returns the unwrapped data.
