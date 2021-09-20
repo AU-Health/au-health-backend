@@ -1,4 +1,4 @@
-use async_graphql::{Error, InputObject};
+use async_graphql::{Error, InputObject, SimpleObject};
 use chrono::{DateTime, Utc};
 use sqlx::{Pool, Postgres};
 use uuid::Uuid;
@@ -11,6 +11,7 @@ pub struct NewQuestion {
     pub responses: Option<Vec<String>>,
 }
 
+#[derive(SimpleObject, Debug)]
 pub struct Question {
     pub id: Uuid,
     pub created_at: DateTime<Utc>,

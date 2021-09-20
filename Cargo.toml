@@ -37,6 +37,7 @@ async-graphql-axum = "2.9.15"
 validator = "0.14.0"
 unicode-segmentation = "1.8.0"
 futures = "0.3.17"
+dotenv = "0.15.0"
 
 [dependencies.sqlx]
 version = "0.5.7"

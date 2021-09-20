@@ -1,4 +1,4 @@
-use std::convert::TryInto;
+use std::convert::TryFrom;
 
 use argon2::{
     password_hash::{rand_core::OsRng, SaltString},
@@ -69,12 +69,13 @@ pub struct VerifiedNewUser {
     password: ValidPassword,
 }
 
-impl TryInto<VerifiedNewUser> for NewUser {
+impl TryFrom<NewUser> for VerifiedNewUser {
     type Error = String;
-    fn try_into(self) -> Result<VerifiedNewUser, String> {
-        let email = ValidEmail::parse(self.email)?;
 
-        let password = ValidPassword::parse(self.password)?;
+    fn try_from(new_user: NewUser) -> Result<VerifiedNewUser, String> {
+        let email = ValidEmail::parse(new_user.email)?;
+
+        let password = ValidPassword::parse(new_user.password)?;
 
         Ok(VerifiedNewUser { email, password })
     }

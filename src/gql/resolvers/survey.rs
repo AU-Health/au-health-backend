@@ -3,10 +3,10 @@ use async_graphql::{Context, Error, Object};
 use crate::{domain::survey::NewSurvey, gql::context::ParsedContext};
 
 #[derive(Default)]
-pub struct SurveyQuery;
+pub struct SurveyMutation;
 
 #[Object]
-impl SurveyQuery {
+impl SurveyMutation {
     pub async fn create_survey(
         &self,
         raw_ctx: &Context<'_>,

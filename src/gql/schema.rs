@@ -2,7 +2,11 @@ use async_graphql::{
     Context, EmptySubscription, Error, MergedObject, Object, Schema, SchemaBuilder,
 };
 
-use super::resolvers::user::{UserMutation, UserQuery};
+use super::resolvers::{
+    question::QuestionMutation,
+    survey::SurveyMutation,
+    user::{UserMutation, UserQuery},
+};
 
 pub fn build_schema() -> GqlSchemaBuilder {
     Schema::build(Query::default(), Mutation::default(), EmptySubscription)
@@ -22,7 +26,7 @@ impl HealthCheckQuery {
 pub struct Query(UserQuery, HealthCheckQuery);
 
 #[derive(MergedObject, Default)]
-pub struct Mutation(UserMutation);
+pub struct Mutation(UserMutation, SurveyMutation, QuestionMutation);
 
 pub type GqlSchema = Schema<Query, Mutation, EmptySubscription>;
 

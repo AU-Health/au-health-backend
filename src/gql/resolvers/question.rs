@@ -2,20 +2,20 @@ use async_graphql::{Context, Error, Object};
 
 use super::super::context::ParsedContext;
 use crate::domain::{
-    question::NewQuestion,
+    question::{NewQuestion, Question},
     user::{Role, User},
 };
 
 #[derive(Default)]
-pub struct QuestionQuery;
+pub struct QuestionMutation;
 
 #[Object]
-impl QuestionQuery {
+impl QuestionMutation {
     pub async fn create_question(
         &self,
         raw_ctx: &Context<'_>,
-        #[graphql(desc = "New Question to add")] _question: NewQuestion,
-    ) -> Result<bool, Error> {
+        #[graphql(desc = "New Question to add")] question: NewQuestion,
+    ) -> Result<Question, Error> {
         let ctx = ParsedContext::new(raw_ctx);
 
         // get the cookie or error out
@@ -27,6 +27,6 @@ impl QuestionQuery {
 
         user.role.authorized(vec![Role::Admin])?;
 
-        Ok(true)
+        question.create_question(ctx.db_pool).await
     }
 }

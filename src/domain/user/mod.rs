@@ -74,6 +74,19 @@ impl User {
             .is_ok())
     }
 
+    pub async fn change_role(&self, pool: &Pool<Postgres>, new_role: Role) -> Result<Self, Error> {
+        let user = sqlx::query_as!(
+            User,
+            r#"UPDATE user_account SET role = $1 WHERE id = $2 RETURNING id, email, password, created_at, updated_at, role as "role: _";"#,
+            new_role as Role,
+            self.id,
+        )
+        .fetch_one(pool)
+        .await?;
+
+        Ok(user)
+    }
+
     pub async fn query_by_id(pool: &Pool<Postgres>, user_id: Uuid) -> Result<Self, Error> {
         let user = sqlx::query_as!(
             User,
@@ -82,6 +95,25 @@ impl User {
         WHERE id = $1
         LIMIT 1;"#,
             user_id
+        )
+        .fetch_one(pool)
+        .await
+        .map_err(|e| {
+            tracing::error!("Failed to execute query: {:?}", e);
+            e
+        })?;
+
+        Ok(user)
+    }
+
+    pub async fn query_by_email(pool: &Pool<Postgres>, email: &str) -> Result<Self, Error> {
+        let user = sqlx::query_as!(
+            User,
+            r#"SELECT id, email, password, created_at, updated_at, role as "role: _"
+        FROM user_account
+        WHERE email = $1
+        LIMIT 1;"#,
+            email
         )
         .fetch_one(pool)
         .await
