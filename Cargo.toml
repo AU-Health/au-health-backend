@@ -56,3 +56,4 @@ features = [
 cynic = {version = "0.14.1", features = ["reqwest"]}
 reqwest = {version = "0.11.4", features = ["json", "rustls-tls", "cookies"]}
 regex = "1.5.4"
+claim = "0.5.0"

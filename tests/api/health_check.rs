@@ -1,8 +1,6 @@
-mod gql;
-mod helpers;
 use cynic::{Operation, QueryBuilder};
-use gql::gql_schema::queries::HealthCheck;
-pub use helpers::*;
+
+use crate::{gql::gql_schema::queries::HealthCheck, helpers::TestApp};
 
 #[tokio::test]
 async fn health_check_works() {
@@ -11,6 +9,8 @@ async fn health_check_works() {
     let query: Operation<HealthCheck> = HealthCheck::build(());
 
     let response = app.send_graphql_request(query).await;
+
+    assert_ok!(response);
 
     assert!(response.health_check);
 }

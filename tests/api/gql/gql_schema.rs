@@ -1,4 +1,4 @@
-#[cynic::schema_for_derives(file = r#"tests/gql/schema.graphql"#, module = "schema")]
+#[cynic::schema_for_derives(file = r#"tests/api/gql/schema.graphql"#, module = "schema")]
 pub mod queries {
     use super::schema;
 
@@ -72,5 +72,5 @@ pub mod queries {
 }
 
 mod schema {
-    cynic::use_schema!(r#"tests/gql/schema.graphql"#);
+    cynic::use_schema!(r#"tests/api/gql/schema.graphql"#);
 }
