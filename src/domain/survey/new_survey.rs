@@ -1,12 +1,20 @@
 use async_graphql::{Error, InputObject};
-use chrono::{DateTime, Utc};
+use chrono::Utc;
 use futures::future::join_all;
 use sqlx::{Pool, Postgres};
 use uuid::Uuid;
 
+use super::Survey;
+
+#[derive(InputObject)]
+pub struct NewAnswer {
+    pub question_id: Uuid,
+    pub answer: String,
+}
+
 #[derive(InputObject)]
 pub struct NewSurvey {
-    pub answers: Vec<Answer>,
+    pub answers: Vec<NewAnswer>,
 }
 
 impl NewSurvey {
@@ -56,17 +64,4 @@ impl NewSurvey {
 
         Ok(survey)
     }
-}
-
-#[derive(InputObject)]
-pub struct Answer {
-    pub question_id: Uuid,
-    pub answer: String,
-}
-
-pub struct Survey {
-    pub id: Uuid,
-    pub user_id: Uuid,
-    pub created_at: DateTime<Utc>,
-    pub updated_at: DateTime<Utc>,
 }

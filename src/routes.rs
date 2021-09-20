@@ -14,7 +14,7 @@ use headers::{AccessControlAllowOrigin, HeaderMapExt};
 use http::Response;
 use hyper::Body;
 
-use crate::{auth::AuthSessionCookie, configuration::GraphQlSettings, gql::schema::GqlSchema};
+use crate::{configuration::GraphQlSettings, gql::schema::GqlSchema, session::SessionCookie};
 
 /// initalize GraphQL Playground UI for testing.
 async fn graphql_playground() -> impl IntoResponse {
@@ -25,7 +25,7 @@ async fn graphql_playground() -> impl IntoResponse {
 async fn graphql_handler(
     schema: Extension<GqlSchema>,
     graphql_req: GraphQLRequest,
-    auth_cookies: Option<AuthSessionCookie>,
+    auth_cookies: Option<SessionCookie>,
 ) -> Response<Body> {
     let gql_resp: GraphQLResponse = schema
         .execute(graphql_req.into_inner().data(auth_cookies))

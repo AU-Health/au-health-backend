@@ -3,7 +3,10 @@ mod helpers;
 use std::convert::TryInto;
 
 use argon2::Argon2;
-use au_health_backend::domain::{self, user::User, user_registration::VerifiedNewUser};
+use au_health_backend::domain::{
+    self,
+    user::{User, VerifiedNewUser},
+};
 use cynic::{MutationBuilder, Operation};
 use gql::gql_schema::queries::{
     Login, LoginArguments, LoginUser, NewUser, Register, RegisterArguments,
@@ -35,9 +38,9 @@ async fn register_works() {
 
     let db_user = sqlx::query_as!(
         User,
-        "SELECT id, email, password, created_at, updated_at
+        r#"SELECT id, email, password, created_at, updated_at, role as "role: _"
      FROM user_account
-     WHERE id = $1 LIMIT 1",
+     WHERE id = $1 LIMIT 1;"#,
         user_id
     )
     .fetch_one(&app.db_pool)
@@ -51,7 +54,7 @@ async fn register_works() {
 async fn login_works() {
     let app = spawn_app().await;
 
-    let user = domain::user_registration::NewUser {
+    let user = domain::user::NewUser {
         email: "mw3915a@student.american.edu".to_string(),
         password: "hunter2".to_string(),
     };

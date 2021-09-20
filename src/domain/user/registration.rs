@@ -11,7 +11,7 @@ use unicode_segmentation::UnicodeSegmentation;
 use uuid::Uuid;
 use validator::validate_email;
 
-use super::user::User;
+use super::{Role, User};
 
 #[derive(InputObject, Clone)]
 /// Input from GQL
@@ -94,14 +94,15 @@ impl VerifiedNewUser {
 
         let user = sqlx::query_as!(
             User,
-            "INSERT INTO user_account (id, email, password, created_at, updated_at) 
-        VALUES ($1, $2, $3, $4, $5) 
-        RETURNING *;",
+            r#"INSERT INTO user_account (id, email, password, created_at, updated_at, role) 
+        VALUES ($1, $2, $3, $4, $5, $6) 
+        RETURNING id, email, password, created_at, updated_at, role as "role: _";"#,
             Uuid::new_v4(),
             self.email.as_ref(),
             hashed_password,
             Utc::now(),
-            Utc::now()
+            Utc::now(),
+            Role::User as Role
         )
         .fetch_one(pool)
         .await

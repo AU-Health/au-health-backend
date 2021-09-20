@@ -1,28 +1,26 @@
 use async_graphql::{Context, Error, Object};
 
-use crate::{domain::survey::NewSurvey, gql::context::ContextData};
+use crate::{domain::survey::NewSurvey, gql::context::ParsedContext};
 
 #[derive(Default)]
 pub struct SurveyQuery;
 
 #[Object]
 impl SurveyQuery {
-    async fn create_survey(
+    pub async fn create_survey(
         &self,
-        ctx: &Context<'_>,
+        raw_ctx: &Context<'_>,
         #[graphql(desc = "Survey submission")] survey: NewSurvey,
     ) -> Result<bool, Error> {
-        let context_data = ContextData::new(ctx);
+        let ctx = ParsedContext::new(raw_ctx);
 
-        match context_data.auth_session_cookie {
-            None => Err(Error::new("Not logged in")),
-            Some(cookie) => {
-                let user_id = cookie.get_user_id(context_data.session_store).await?;
+        // get the cookie or error out
+        let cookie = ctx.get_cookie()?;
 
-                survey.create_survey(context_data.db_pool, user_id).await?;
+        let user_id = ctx.session_manager.user_id(cookie).await?;
 
-                Ok(true)
-            }
-        }
+        survey.create_survey(ctx.db_pool, user_id).await?;
+
+        Ok(true)
     }
 }
