@@ -1,7 +1,16 @@
+# Directs the executor to query only when the field exists.
+directive @ifdef on FIELD
+
 # Implement the DateTime<Utc> scalar
 #
 # The input/output is a string in RFC3339 format.
 scalar DateTime
+
+type HealthCheck {
+  database: Boolean!
+  redis: Boolean!
+  api: Boolean!
+}
 
 # Input from GQL, consume with login_user() to get a User.
 input LoginUser {
@@ -22,6 +31,30 @@ type Mutation {
     newUser: NewUser!
   ): User!
   logout: Boolean!
+  createSurvey(
+    # Survey submission
+    survey: NewSurvey!
+  ): Boolean!
+  createQuestion(
+    # New Question to add
+    question: NewQuestion!
+  ): Question!
+}
+
+input NewAnswer {
+  questionId: UUID!
+  answer: String!
+}
+
+input NewQuestion {
+  question: String!
+  category: String!
+  responseType: String!
+  responses: [String!]
+}
+
+input NewSurvey {
+  answers: [NewAnswer!]!
 }
 
 # Input from GQL
@@ -34,7 +67,21 @@ input NewUser {
 type Query {
   # Checks for the currently logged in user by parsing the cookie.
   me: User
-  healthCheck: Boolean!
+  healthCheck: HealthCheck!
+}
+
+type Question {
+  id: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  question: String!
+  categoryId: UUID!
+  responseTypeId: UUID!
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 scalar UUID
@@ -45,4 +92,5 @@ type User {
   email: String!
   createdAt: DateTime!
   updatedAt: DateTime!
+  role: Role!
 }

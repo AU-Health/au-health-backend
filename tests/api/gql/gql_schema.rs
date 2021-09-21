@@ -20,8 +20,8 @@ pub mod queries {
 
     #[derive(cynic::QueryFragment, Debug)]
     #[cynic(graphql_type = "Query")]
-    pub struct HealthCheck {
-        pub health_check: bool,
+    pub struct HealthCheckQuery {
+        pub health_check: HealthCheck,
     }
 
     #[derive(cynic::QueryFragment, Debug)]
@@ -42,6 +42,13 @@ pub mod queries {
     pub struct Login {
         #[arguments(login_user = &args.user)]
         pub login: User,
+    }
+
+    #[derive(cynic::QueryFragment, Debug)]
+    pub struct HealthCheck {
+        pub api: bool,
+        pub database: bool,
+        pub redis: bool,
     }
 
     #[derive(cynic::QueryFragment, Debug, Clone)]
