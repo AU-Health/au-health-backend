@@ -10,12 +10,14 @@ pub struct SessionManager<'a> {
 }
 
 impl<'a> SessionManager<'a> {
-    pub fn ping(&self) -> Result<bool, Error> {
+    /// TODO: Stub function atm. Waiting on https://github.com/jbr/async-redis-session/pull/15
+    pub fn ping(&self) -> Result<(), Error> {
         // let store = self.store.connection();
 
-        Ok(true)
+        Ok(())
     }
 
+    /// Creates new `SessionManager` using a `RedisSessionStore`.
     pub fn new(store: &'a RedisSessionStore) -> Self {
         Self { store }
     }
@@ -27,6 +29,7 @@ impl<'a> SessionManager<'a> {
             .ok_or_else(|| Error::new("Session not found"))
     }
 
+    /// Get user's id from the Session.
     pub async fn user_id(&self, session_cookie: &SessionCookie) -> Result<Uuid, Error> {
         let session = self.load_session(session_cookie).await?;
 
