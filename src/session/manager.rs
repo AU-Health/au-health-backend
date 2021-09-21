@@ -10,6 +10,12 @@ pub struct SessionManager<'a> {
 }
 
 impl<'a> SessionManager<'a> {
+    pub fn ping(&self) -> Result<bool, Error> {
+        // let store = self.store.connection();
+
+        Ok(true)
+    }
+
     pub fn new(store: &'a RedisSessionStore) -> Self {
         Self { store }
     }
