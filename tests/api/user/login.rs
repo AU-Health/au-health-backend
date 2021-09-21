@@ -1,3 +1,15 @@
+use std::convert::TryFrom;
+
+use argon2::Argon2;
+use au_health_backend::domain::{self, user::VerifiedNewUser};
+use claim::assert_ok;
+use cynic::{MutationBuilder, Operation};
+
+use crate::{
+    gql::gql_schema::queries::{Login, LoginArguments, LoginUser},
+    helpers::TestApp,
+};
+
 #[tokio::test]
 async fn login_works() {
     let app = TestApp::new().await;
@@ -7,7 +19,8 @@ async fn login_works() {
         password: "hunter2".to_string(),
     };
 
-    let verified_user: VerifiedNewUser = user.clone().try_into().expect("cannot verify user");
+    let verified_user =
+        VerifiedNewUser::try_from(user.clone()).expect("Unable to create verified user");
 
     verified_user
         .register_user(&app.db_pool, &Argon2::default())
@@ -25,7 +38,9 @@ async fn login_works() {
 
     let response = app.send_graphql_request(query).await;
 
-    assert_eq!(response.login.email, login_user.email);
+    assert_ok!(&response);
+
+    assert_eq!(response.unwrap().login.email, login_user.email);
 
     assert!(app.auth_cookie_present());
 }

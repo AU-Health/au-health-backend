@@ -1,4 +1,6 @@
-use cynic::{MutationBuilder, Operation, QueryBuilder};
+use au_health_backend::domain::user::User;
+use claim::{assert_err, assert_ok};
+use cynic::{MutationBuilder, Operation};
 use uuid::Uuid;
 
 use crate::{
@@ -19,7 +21,9 @@ async fn register_returns_user_with_same_email_on_valid_input() {
 
     let response = app.send_graphql_request(query).await;
 
-    assert_eq!(response.register.email.clone(), user.email.clone());
+    assert_ok!(&response);
+
+    assert_eq!(response.unwrap().register.email, user.email.clone());
 }
 
 #[tokio::test]
@@ -33,7 +37,10 @@ async fn register_persists_user_in_database_on_valid_input() {
 
     let query: Operation<Register> = Register::build(&RegisterArguments { user: user.clone() });
 
-    let response = app.send_graphql_request(query).await;
+    let response = app
+        .send_graphql_request(query)
+        .await
+        .expect("Register error");
 
     let user_id = Uuid::parse_str(&response.register.id.0).expect("unable to parse uuid");
 
@@ -62,7 +69,7 @@ async fn register_sets_cookie_on_client_on_valid_input() {
 
     let query: Operation<Register> = Register::build(&RegisterArguments { user: user.clone() });
 
-    let response = app.send_graphql_request(query).await;
+    let _response = app.send_graphql_request(query).await;
 
     assert!(app.auth_cookie_present());
 }
@@ -83,5 +90,16 @@ async fn register_fails_on_invalid_email_domain() {
 
     let response = app.send_graphql_request(query).await;
 
-    response
+    assert_err!(&response);
+
+    let errors = response.as_ref().err().unwrap();
+
+    assert_eq!(errors.len(), 1);
+
+    let err = &response.err().unwrap()[0];
+
+    assert_eq!(
+        err.message,
+        format!("{} is not a valid email", invalid_user.email)
+    );
 }

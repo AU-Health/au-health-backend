@@ -1,3 +1,4 @@
+use claim::assert_ok;
 use cynic::{MutationBuilder, Operation};
 
 use crate::{
@@ -25,7 +26,9 @@ async fn logout_works() {
 
     let response = app.send_graphql_request(query).await;
 
-    assert!(response.logout);
+    assert_ok!(&response);
+
+    assert!(response.unwrap().logout);
 
     assert!(!app.auth_cookie_present());
 }
