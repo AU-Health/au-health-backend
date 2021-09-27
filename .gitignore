@@ -3,7 +3,6 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,windows,linux,rust
 data/*
 
-.env
 ### Linux ###
 *~
 
