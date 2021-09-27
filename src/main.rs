@@ -29,6 +29,8 @@ async fn main() {
         .await
         .expect("Failed to connect to Postgres");
 
+    sqlx::migrate!().run(&db_pool).await?;
+
     let store = RedisSessionStore::new(configuration.database.redis.with_port())
         .expect("Failed to connect to Redis");
 
