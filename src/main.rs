@@ -33,7 +33,7 @@ async fn main() {
     sqlx::migrate!()
         .run(&db_pool)
         .await
-        .expect("Unable to run migrations");
+        .expect("Failed to run database migrations");
 
     let store = RedisSessionStore::new(configuration.database.redis.with_port())
         .expect("Failed to connect to Redis");
