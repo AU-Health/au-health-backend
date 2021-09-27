@@ -29,6 +29,7 @@ async fn main() {
         .await
         .expect("Failed to connect to Postgres");
 
+    // Run migrations. TODO: only do this on dev environment
     sqlx::migrate!().run(&db_pool).await?;
 
     let store = RedisSessionStore::new(configuration.database.redis.with_port())
