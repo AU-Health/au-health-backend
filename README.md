@@ -9,3 +9,7 @@ Run this command inside the directory: `docker compose up -d`
 This should download all of the images you need, build the server, and then run the databases and server. It may take a few minutes especially on the first run.
 
 The `.env` file controls the base admin email and password.
+
+## Prepare the sqlx queries for offline building
+
+`cargo sqlx prepare -- --lib`

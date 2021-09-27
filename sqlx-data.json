@@ -1,5 +1,76 @@
 {
   "db": "PostgreSQL",
+  "15ca95ef9f15dbef3c9fe96c58f59201020965e582096afe877fdfcb662dcf33": {
+    "query": "UPDATE user_account SET role = $1 WHERE id = $2 RETURNING id, email, password, created_at, updated_at, role as \"role: _\";",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "email",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 2,
+          "name": "password",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 3,
+          "name": "created_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 4,
+          "name": "updated_at",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 5,
+          "name": "role: _",
+          "type_info": {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "user",
+                  "admin"
+                ]
+              }
+            }
+          }
+        }
+      ],
+      "parameters": {
+        "Left": [
+          {
+            "Custom": {
+              "name": "user_role",
+              "kind": {
+                "Enum": [
+                  "user",
+                  "admin"
+                ]
+              }
+            }
+          },
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
   "1f09c056ff3ed5115f46012d56df9fa8bea7e2f6116683c167e2de3f8fd9e8d6": {
     "query": "SELECT id, email, password, created_at, updated_at, role as \"role: _\"\n        FROM user_account\n        WHERE id = $1\n        LIMIT 1;",
     "describe": {
