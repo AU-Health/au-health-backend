@@ -2,7 +2,7 @@
 
 -- Create tables to store survey content and answers.
 
-CREATE TABLE survey (
+CREATE TABLE survey_response (
     id uuid NOT NULL PRIMARY KEY,
     user_id uuid UNIQUE NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
@@ -40,9 +40,9 @@ CREATE TABLE answer (
     created_at TIMESTAMPTZ NOT NULL,
     updated_at TIMESTAMPTZ NOT NULL,
     answer TEXT NOT NULL,
-    survey_id uuid NOT NULL,
+    survey_response_id uuid NOT NULL,
     question_id uuid NOT NULL,
-    FOREIGN KEY (survey_id) REFERENCES survey(id) ON DELETE CASCADE,
+    FOREIGN KEY (survey_response_id) REFERENCES survey_response(id) ON DELETE CASCADE,
     FOREIGN KEY (question_id) REFERENCES question(id) ON DELETE CASCADE
 );
 

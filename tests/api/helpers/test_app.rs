@@ -73,10 +73,10 @@ impl TestApp {
         let _ = tokio::spawn(server);
 
         Self {
+            cookie_jar,
+            client,
             address,
             db_pool,
-            client,
-            cookie_jar,
         }
     }
 }

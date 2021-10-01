@@ -4,7 +4,7 @@ use futures::future::join_all;
 use sqlx::{Pool, Postgres};
 use uuid::Uuid;
 
-use super::Survey;
+use super::SurveyResponse;
 
 #[derive(InputObject)]
 pub struct NewAnswer {
@@ -13,19 +13,19 @@ pub struct NewAnswer {
 }
 
 #[derive(InputObject)]
-pub struct NewSurvey {
+pub struct NewSurveyResponse {
     pub answers: Vec<NewAnswer>,
 }
 
-impl NewSurvey {
-    pub async fn create_survey(
+impl NewSurveyResponse {
+    pub async fn create_survey_response(
         self,
         pool: &Pool<Postgres>,
         user_id: Uuid,
-    ) -> Result<Survey, Error> {
-        let survey = sqlx::query_as!(
-            Survey,
-            "INSERT INTO survey (id, user_id, created_at, updated_at)
+    ) -> Result<SurveyResponse, Error> {
+        let survey_response = sqlx::query_as!(
+            SurveyResponse,
+            "INSERT INTO survey_response (id, user_id, created_at, updated_at)
         VALUES ($1, $2, $3, $4)
         RETURNING *;",
             Uuid::new_v4(),
@@ -42,13 +42,13 @@ impl NewSurvey {
 
         let answer_queries = self.answers.into_iter().map(|ans| {
             sqlx::query!(
-                "INSERT INTO answer (id, created_at, updated_at, answer, survey_id, question_id) 
+                "INSERT INTO answer (id, created_at, updated_at, answer, survey_response_id, question_id) 
             VALUES ($1, $2, $3, $4, $5, $6);",
                 Uuid::new_v4(),
                 Utc::now(),
                 Utc::now(),
                 ans.answer,
-                survey.id,
+                survey_response.id,
                 ans.question_id
             )
             .execute(pool)
@@ -62,6 +62,6 @@ impl NewSurvey {
             }
         }
 
-        Ok(survey)
+        Ok(survey_response)
     }
 }
