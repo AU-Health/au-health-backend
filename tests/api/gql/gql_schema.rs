@@ -79,5 +79,5 @@ pub mod queries {
 }
 
 mod schema {
-    cynic::use_schema!(r#"tests/api/gql/schema.graphql"#);
+    cynic::use_schema!(r#"./tests/api/gql/schema.graphql"#);
 }
