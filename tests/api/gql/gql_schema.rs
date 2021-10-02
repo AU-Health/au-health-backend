@@ -1,4 +1,4 @@
-#[cynic::schema_for_derives(file = r#"tests/api/gql/schema.graphql"#, module = "schema")]
+#[cynic::schema_for_derives(file = r#"./tests/api/gql/schema.graphql"#, module = "schema")]
 pub mod queries {
     use super::schema;
 
@@ -10,6 +10,32 @@ pub mod queries {
     #[derive(cynic::FragmentArguments, Debug)]
     pub struct LoginArguments {
         pub user: LoginUser,
+    }
+
+    #[derive(cynic::FragmentArguments, Debug)]
+    pub struct NewSurveyResponse {
+        pub answers: Vec<NewAnswer>,
+    }
+
+    #[derive(cynic::FragmentArguments, Debug)]
+    pub struct NewAnswer {
+        pub answer: String,
+        pub question_id: String,
+    }
+
+    #[derive(cynic::FragmentArguments, Debug)]
+    pub struct CreateSurveyResponseArguments {
+        pub survey_response: NewSurveyResponse,
+    }
+
+    #[derive(cynic::QueryFragment, Debug)]
+    #[cynic(
+        graphql_type = "Mutation",
+        argument_struct = "CreateSurveyResponseArguments"
+    )]
+    pub struct CreateSurveyResponse {
+        #[arguments(survey_response = &args.survey_response)]
+        pub create_survey_response: bool,
     }
 
     #[derive(cynic::QueryFragment, Debug)]
