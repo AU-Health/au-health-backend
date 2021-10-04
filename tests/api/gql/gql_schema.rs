@@ -12,15 +12,15 @@ pub mod queries {
         pub user: LoginUser,
     }
 
-    #[derive(cynic::FragmentArguments, Debug)]
+    #[derive(cynic::InputObject, Debug)]
     pub struct NewSurveyResponse {
         pub answers: Vec<NewAnswer>,
     }
 
-    #[derive(cynic::FragmentArguments, Debug)]
+    #[derive(cynic::InputObject, Debug)]
     pub struct NewAnswer {
         pub answer: String,
-        pub question_id: String,
+        pub question_id: Uuid,
     }
 
     #[derive(cynic::FragmentArguments, Debug)]
