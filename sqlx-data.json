@@ -131,6 +131,23 @@
       ]
     }
   },
+  "5fd029715044ce47d800ba0f4006eb0954a1590ae4c1a1b77a1d8ecf30f9cc46": {
+    "query": "INSERT INTO answer (id, created_at, updated_at, answer, survey_response_id, question_id) \n            VALUES ($1, $2, $3, $4, $5, $6);",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Timestamptz",
+          "Timestamptz",
+          "Text",
+          "Uuid",
+          "Uuid"
+        ]
+      },
+      "nullable": []
+    }
+  },
   "63c2a5ddd9b1ffa0a84e16f0a109d4068016f43c9ff647edcd76496ff1594226": {
     "query": "INSERT INTO question_category (id, created_at, updated_at, name) VALUES ($1, $2, $3, $4) RETURNING *;",
     "describe": {
@@ -170,23 +187,6 @@
         false,
         false
       ]
-    }
-  },
-  "8951e1c68dd557ad0b5f14de7960c21d7b6d21ef478e8ab2a3d0467a5040cb09": {
-    "query": "INSERT INTO answer (id, created_at, updated_at, answer, survey_id, question_id) \n            VALUES ($1, $2, $3, $4, $5, $6);",
-    "describe": {
-      "columns": [],
-      "parameters": {
-        "Left": [
-          "Uuid",
-          "Timestamptz",
-          "Timestamptz",
-          "Text",
-          "Uuid",
-          "Uuid"
-        ]
-      },
-      "nullable": []
     }
   },
   "8bd4d96a9366d1be0027a2016990ad692aa77f8513d0f3ac59be6cadf32c3423": {
@@ -455,8 +455,8 @@
       ]
     }
   },
-  "dc4c75479725e402ff7eaaef7a7b93a193d8a48a584f902d390c6e64e6391995": {
-    "query": "INSERT INTO survey (id, user_id, created_at, updated_at)\n        VALUES ($1, $2, $3, $4)\n        RETURNING *;",
+  "ff01dbae0f3c90dff107bfc8eaf9d98a53f5dec343d784800858b55acdb5873c": {
+    "query": "INSERT INTO survey_response (id, user_id, created_at, updated_at)\n        VALUES ($1, $2, $3, $4)\n        RETURNING *;",
     "describe": {
       "columns": [
         {
