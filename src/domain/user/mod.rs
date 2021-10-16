@@ -49,7 +49,7 @@ impl LoginUser {
         }
     }
 }
-#[derive(SimpleObject, Debug)]
+#[derive(SimpleObject, Debug, Clone)]
 /// User with all fields attached. Returned from DB.
 pub struct User {
     pub id: Uuid,

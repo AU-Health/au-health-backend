@@ -18,7 +18,7 @@ pub struct NewSurveyResponse {
 }
 
 impl NewSurveyResponse {
-    pub async fn create_survey_response(
+    pub async fn save_to_db(
         self,
         pool: &Pool<Postgres>,
         user_id: Uuid,

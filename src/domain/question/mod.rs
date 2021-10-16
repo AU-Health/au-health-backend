@@ -36,7 +36,7 @@ pub struct ResponseType {
 }
 
 impl NewQuestion {
-    pub async fn create_question(self, pool: &Pool<Postgres>) -> Result<Question, Error> {
+    pub async fn save_to_db(self, pool: &Pool<Postgres>) -> Result<Question, Error> {
         let category_query = sqlx::query_as!(Category, "SELECT id, created_at, updated_at, name FROM question_category WHERE name = $1 LIMIT 1;", self.category).fetch_one(pool).await;
 
         let category = match category_query {

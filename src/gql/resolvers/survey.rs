@@ -19,9 +19,7 @@ impl SurveyMutation {
 
         let user_id = ctx.session_manager.user_id(cookie).await?;
 
-        survey_response
-            .create_survey_response(ctx.db_pool, user_id)
-            .await?;
+        survey_response.save_to_db(ctx.db_pool, user_id).await?;
 
         Ok(true)
     }

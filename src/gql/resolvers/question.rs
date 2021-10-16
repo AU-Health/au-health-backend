@@ -27,6 +27,6 @@ impl QuestionMutation {
 
         user.role.authorized(vec![Role::Admin])?;
 
-        question.create_question(ctx.db_pool).await
+        question.save_to_db(ctx.db_pool).await
     }
 }
