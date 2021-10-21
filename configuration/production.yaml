@@ -1,6 +1,6 @@
 application:
   graphql:
-    playground_enabled: false
+    playground_enabled: true
 database:
   postgres:
     host: "postgres"

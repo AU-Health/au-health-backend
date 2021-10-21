@@ -27,7 +27,7 @@ services:
     build:
       context: ./
       args:
-        APP_ENVIRONMENT: local
+        ENVIRONMENT: production
     env_file: .env
     depends_on:
       - postgres
