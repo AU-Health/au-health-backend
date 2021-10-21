@@ -12,7 +12,7 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
     settings.merge(config::File::from(config_dir.join("base")).required(true))?;
 
     let environment: Environment = std::env::var("APP_ENVIRONMENT")
-        .unwrap_or_else(|_| "local".into())
+        .unwrap_or_else(|_| "development".into())
         .try_into()
         .expect("Failed to get APP_ENVIRONMENT");
 

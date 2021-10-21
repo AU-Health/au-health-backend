@@ -1,3 +1,4 @@
+ARG APP_ENVIRONMENT=production
 FROM rust:1.55 AS builder
 WORKDIR /app
 COPY . .
@@ -13,5 +14,5 @@ WORKDIR /app
 #     && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /app/target/release/au-health-backend au-health-backend
 COPY configuration configuration
-ENV APP_ENVIRONMENT production
+ENV APP_ENVIRONMENT $APP_ENVIRONMENT
 ENTRYPOINT ["./au-health-backend"]`

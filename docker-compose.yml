@@ -24,7 +24,10 @@ services:
       timeout: 3s
       retries: 30
   server:
-    build: ./
+    build:
+      context: ./
+      args:
+        APP_ENVIRONMENT: development
     env_file: .env
     depends_on:
       - postgres
