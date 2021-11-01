@@ -23,7 +23,7 @@ impl LoginUser {
         pool: &Pool<Postgres>,
         argon2: &Argon2<'_>,
     ) -> Result<User, Error> {
-        let user = sqlx::query_as!(
+        let maybe_user = sqlx::query_as!(
             User,
             r#"SELECT id, email, password, created_at, updated_at, role as "role: _"
         FROM user_account
@@ -31,12 +31,14 @@ impl LoginUser {
         LIMIT 1;"#,
             self.email
         )
-        .fetch_one(pool)
+        .fetch_optional(pool)
         .await
         .map_err(|e| {
             tracing::error!("Failed to execute query: {:?}", e);
             e
         })?;
+
+        let user = maybe_user.ok_or_else(|| Error::new("Invalid user"))?;
 
         let valid = user.verify_password(argon2, self.password).map_err(|e| {
             tracing::info!("Failed to verify password");
