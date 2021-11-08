@@ -1,4 +1,4 @@
-FROM rust:1.55 AS builder
+FROM rust:1.56 AS builder
 WORKDIR /app
 COPY . .
 ENV SQLX_OFFLINE true
