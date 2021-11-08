@@ -11,3 +11,5 @@ database:
     database_name: "wellness"
   redis:
     port: 6379
+    username: ""
+    password: ""

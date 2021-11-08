@@ -1,6 +1,7 @@
 application:
+  port: 8080
   graphql:
-    playground_enabled: true
+    playground_enabled: false
 database:
   postgres:
     host: "postgres"

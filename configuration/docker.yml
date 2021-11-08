@@ -1,9 +1,10 @@
 application:
+  port: 8000
   graphql:
     playground_enabled: true
 database:
   postgres:
-    host: "localhost"
+    host: "postgres"
     require_ssl: false
   redis:
-    host: "localhost"
+    host: "redis"

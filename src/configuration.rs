@@ -18,7 +18,9 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
 
     settings.merge(config::File::from(config_dir.join(environment.as_str())).required(true))?;
 
-    settings.merge(config::Environment::with_prefix("app").separator("__"))?;
+    settings.merge(config::Environment::with_prefix("APP_").separator("__"))?;
+
+    println!("{:?}", settings);
 
     settings.try_into()
 }
@@ -51,6 +53,8 @@ pub struct PostgresSettings {
 pub struct RedisSettings {
     host: String,
     port: String,
+    username: String,
+    password: String,
 }
 
 impl RedisSettings {
@@ -58,7 +62,7 @@ impl RedisSettings {
         format!("{}:{}", self.without_port(), self.port)
     }
     pub fn without_port(&self) -> String {
-        format!("redis://{}", self.host)
+        format!("redis://{}:{}@{}", self.username, self.password, self.host)
     }
 }
 
@@ -94,11 +98,14 @@ pub struct ApplicationSettings {
     pub port: u16,
     pub host: String,
     pub graphql: GraphQlSettings,
+    pub root_email: String,
+    pub root_password: String,
 }
 
 pub enum Environment {
     Local,
     Production,
+    Docker,
 }
 
 impl Environment {
@@ -106,6 +113,7 @@ impl Environment {
         match self {
             Environment::Local => "local",
             Environment::Production => "production",
+            Environment::Docker => "docker",
         }
     }
 }
@@ -117,6 +125,7 @@ impl TryFrom<String> for Environment {
         match s.to_lowercase().as_str() {
             "local" => Ok(Self::Local),
             "production" => Ok(Self::Production),
+            "docker" => Ok(Self::Docker),
             other => Err(format!(
                 "{} is not a supported environment. Use either 'local' or 'production'",
                 other

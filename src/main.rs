@@ -48,7 +48,12 @@ async fn main() {
 
     print_init_messages(&address, &configuration.application.graphql.path);
 
-    check_for_root_user(&db_pool).await;
+    check_for_root_user(
+        &db_pool,
+        configuration.application.root_email,
+        configuration.application.root_password,
+    )
+    .await;
 
     run(listener, db_pool, configuration.application.graphql, store)
         .await
@@ -62,16 +67,16 @@ fn print_init_messages(address: &str, graphql_path: &str) {
     println!("GraphQL link: http://{}{}", nice_link, graphql_path)
 }
 
-async fn check_for_root_user(db_pool: &Pool<Postgres>) {
-    let email = std::env::var("ROOT_EMAIL").expect("ROOT_EMAIL not set");
-    let user_result = User::query_by_email(db_pool, &email).await;
+async fn check_for_root_user(db_pool: &Pool<Postgres>, root_email: String, root_password: String) {
+    let user_result = User::query_by_email(db_pool, &root_email).await;
 
     match user_result {
         Ok(user) => println!("Root user {} already created", user.email),
         Err(_) => {
-            let password = std::env::var("ROOT_PASSWORD").expect("ROOT_PASSWORD not set");
-
-            let new_user = NewUser { email, password };
+            let new_user = NewUser {
+                email: root_email,
+                password: root_password,
+            };
 
             let verified_user = VerifiedNewUser::try_from(new_user)
                 .expect("Failed to validate root user information");
