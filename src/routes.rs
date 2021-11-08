@@ -4,10 +4,9 @@ use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
 
 use axum::{
     extract::Extension,
-    handler::{get, post},
     http::StatusCode,
     response::{Html, IntoResponse},
-    routing::BoxRoute,
+    routing::{get, post},
     AddExtensionLayer, Router,
 };
 use headers::{AccessControlAllowOrigin, HeaderMapExt};
@@ -45,18 +44,14 @@ async fn forbidden_response() -> impl IntoResponse {
     StatusCode::FORBIDDEN
 }
 
-pub fn build_graphql_router(configuration: GraphQlSettings, schema: GqlSchema) -> Router<BoxRoute> {
+pub fn build_graphql_router(configuration: GraphQlSettings, schema: GqlSchema) -> Router {
     let schema_router = Router::new()
         .route(&configuration.path, post(graphql_handler))
         .layer(AddExtensionLayer::new(schema));
 
     if configuration.playground_enabled {
-        schema_router
-            .route(&configuration.path, get(graphql_playground))
-            .boxed()
+        schema_router.route(&configuration.path, get(graphql_playground))
     } else {
-        schema_router
-            .route(&configuration.path, get(forbidden_response))
-            .boxed()
+        schema_router.route(&configuration.path, get(forbidden_response))
     }
 }

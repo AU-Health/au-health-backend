@@ -15,8 +15,8 @@ name = "au-health-backend"
 
 
 [dependencies]
-axum = {version = "0.2.3", features = ["headers"]}
-async-graphql = {version = "2.9.14", features = ["chrono", "uuid"]}
+axum = {version = "0.3.1", features = ["headers"]}
+async-graphql = {version = "2.11.1", features = ["chrono", "uuid"]}
 slab = "0.4.4"
 tokio = { version = "1.11.0", features = ["macros", "time", "rt-multi-thread"] }
 uuid = {version = "0.8.2", features = ["serde","v4"]}
@@ -33,7 +33,7 @@ async-redis-session = "0.2.2"
 headers = "0.3.4"
 async-trait = "0.1.51"
 http = "0.2.4"
-async-graphql-axum = "2.9.15"
+async-graphql-axum = "2.11.1"
 validator = "0.14.0"
 unicode-segmentation = "1.8.0"
 futures = "0.3.17"
