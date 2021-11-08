@@ -6,7 +6,7 @@ use axum::{
     extract::Extension,
     http::StatusCode,
     response::{Html, IntoResponse},
-    routing::{get, post},
+    routing::post,
     AddExtensionLayer, Router,
 };
 use headers::{AccessControlAllowOrigin, HeaderMapExt};
