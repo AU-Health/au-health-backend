@@ -45,13 +45,18 @@ async fn forbidden_response() -> impl IntoResponse {
 }
 
 pub fn build_graphql_router(configuration: GraphQlSettings, schema: GqlSchema) -> Router {
-    let schema_router = Router::new()
-        .route(&configuration.path, post(graphql_handler))
-        .layer(AddExtensionLayer::new(schema));
+    let schema_router = Router::new();
 
-    if configuration.playground_enabled {
-        schema_router.route(&configuration.path, get(graphql_playground))
-    } else {
-        schema_router.route(&configuration.path, get(forbidden_response))
-    }
+    let router_with_route = match configuration.playground_enabled {
+        true => schema_router.route(
+            &configuration.path,
+            post(graphql_handler).get(graphql_playground),
+        ),
+        false => schema_router.route(
+            &configuration.path,
+            post(graphql_handler).get(forbidden_response),
+        ),
+    };
+
+    router_with_route.layer(AddExtensionLayer::new(schema))
 }

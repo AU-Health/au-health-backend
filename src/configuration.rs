@@ -20,8 +20,6 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
 
     settings.merge(config::Environment::with_prefix("APP_").separator("__"))?;
 
-    println!("{:?}", settings);
-
     settings.try_into()
 }
 
