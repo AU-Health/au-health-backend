@@ -62,6 +62,14 @@ Most of the tests are intergation tests run from the `tests` folder. These requi
 
 Theres some helpers set up in the `tests/api/helpers` and `tests/api/gql` folders that help set up the queries and server for testing purposes. You can see these used in the existing tests.
 
+### CI
+
+There is a few CI pipelines that run on pushes to branches. You can find those in `.github/workflows/general.yml`.
+
+There is also security audits that use a database of security issues from the Rust community, those are in `.github/workflows/audit-on-push.yml` and `.github/workflows/scheduled-audit.yml`
+
+Dependabot also runs on this repo, and makes automated Pull Requests to upgrade dependencies. If the tests pass on the CI pipeline, you should be free to merge these. If not, fix whatever is broken in using the new package version and then push it yourself.
+
 ## Running server for backend development
 
 Start the databases (Postgres and Redis) with this command:
