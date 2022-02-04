@@ -60,6 +60,8 @@ Everything that is "domain-specific" (think business logic) should go in the `sr
 
 Most of the tests are intergation tests run from the `tests` folder. These require the databases (Postgres and Redis) to be up and running to be able to run the tests. The tests use [Cynic](https://github.com/obmarg/cynic) to query the GraphQL server and check the responses.
 
+Theres some helpers set up in the `tests/api/helpers` and `tests/api/gql` folders that help set up the queries and server for testing purposes. You can see these used in the existing tests.
+
 ## Running server for backend development
 
 Start the databases (Postgres and Redis) with this command:

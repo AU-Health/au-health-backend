@@ -1,6 +1,8 @@
 application:
   graphql:
     playground_enabled: true
+  root_email: testuser@american.edu
+  root_password: hunter2
 database:
   postgres:
     host: "localhost"
