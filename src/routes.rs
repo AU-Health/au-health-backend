@@ -60,3 +60,5 @@ pub fn build_graphql_router(configuration: GraphQlSettings, schema: GqlSchema) -
 
     router_with_route.layer(AddExtensionLayer::new(schema))
 }
+
+// Initial
