@@ -54,4 +54,6 @@ impl NewQuestion {
 
         Ok(question)
     }
+
+    // TODO Add function that gets answers from the database
 }

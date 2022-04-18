@@ -68,7 +68,12 @@ type Query {
   # Checks for the currently logged in user by parsing the cookie.
   me: User
   healthCheck: HealthCheck!
+
+  # TODO query a question from database to surve to front
+  # TODO query users answers from previous questions so we can compare them over time
+
 }
+ 
 
 type Question {
   id: UUID!
