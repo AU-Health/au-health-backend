@@ -45,10 +45,10 @@ impl SessionCookie {
 
     /// Load actual session from Redis/Session Store.
     pub async fn load_session(&self, session_store: &RedisSessionStore) -> Result<Session, Error> {
-        Ok(session_store
+        session_store
             .load_session(self.value.clone())
             .await
             .map_err(|e| Error::new(e.to_string()))?
-            .ok_or_else(|| Error::new("Session present but not found on Redis"))?)
+            .ok_or_else(|| Error::new("Session present but not found on Redis"))
     }
 }
