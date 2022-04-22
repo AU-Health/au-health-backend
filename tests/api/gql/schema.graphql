@@ -72,6 +72,7 @@ type Query {
   # Checks for the currently logged in user by parsing the cookie.
   me: User
   healthCheck: HealthCheck!
+  questions: [Question]
 
   # TODO query a question from database to surve to front
   # TODO query users answers from previous questions so we can compare them over time
@@ -89,9 +90,6 @@ type Question {
   responses: [String!]! #added responses so we can query the question
 }
 
-type Questions{
-  allQuestions: [Question!] #be able to find all questions in one spot
-}
 
 enum Role {
   USER

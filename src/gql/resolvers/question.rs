@@ -9,6 +9,27 @@ use crate::domain::{
 #[derive(Default)]
 pub struct QuestionMutation;
 
+
+//added this to be able to query questions
+#[derive(Default)] 
+pub struct QuestionQuery;
+
+#[Object]
+impl QuestionQuery{
+    pub async fn return_questions(
+        &self
+    ) -> &str{
+        print!("TEST");
+
+
+
+        return "test"
+    }
+
+}
+
+
+//this lets you add a question, and adds it to the db
 #[Object]
 impl QuestionMutation {
     pub async fn create_question(

@@ -55,5 +55,14 @@ impl NewQuestion {
         Ok(question)
     }
 
+
+    //this might be a good start to querying the question... someone that actually knows SQL can maybe make this work lol
+    
+    // pub async fn get_from_db(self, pool: &Pool<Postgres>) -> Result<Question, Error>{
+
+    //     let question = sqlx::query_as!(Question, "SELECT question, category_id, response_type_id, FROM question WHERE question = $1 LIMIT $1;");
+    //     Ok(question)
+    // }
+
     // TODO Add function that gets answers from the database
 }
