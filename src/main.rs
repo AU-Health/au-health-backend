@@ -4,9 +4,9 @@
 #![warn(missing_docs)]
 
 use std::{convert::TryFrom, net::TcpListener, time::Duration};
-
 use argon2::Argon2;
 use async_redis_session::RedisSessionStore;
+
 use au_health_backend::{
     configuration::get_configuration,
     domain::user::{NewUser, Role, User, VerifiedNewUser},
@@ -17,6 +17,8 @@ use dotenv::dotenv;
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 
 /// Entry point to server.
+/// 
+/// starts up all the databases and everything, makes sure everything is in order to run the app
 #[tokio::main]
 async fn main() {
     dotenv().ok();
@@ -48,6 +50,7 @@ async fn main() {
 
     print_init_messages(&address, &configuration.application.graphql.path);
 
+    //function described below
     check_for_root_user(
         &db_pool,
         configuration.application.root_email,
@@ -60,12 +63,18 @@ async fn main() {
         .unwrap();
 }
 
+
+//shows you in the terminal where the server will be running
+
 fn print_init_messages(address: &str, graphql_path: &str) {
     let nice_link = address.replace("0.0.0.0", "localhost");
 
     println!("Server running on {}", address);
     println!("GraphQL link: http://{}{}", nice_link, graphql_path)
 }
+
+// checks to see if there is a root user (there should be)
+//if there is not, it creates one with the given credentials which are taken from the .env file
 
 async fn check_for_root_user(db_pool: &Pool<Postgres>, root_email: String, root_password: String) {
     let user_result = User::query_by_email(db_pool, &root_email).await;

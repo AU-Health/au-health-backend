@@ -4,21 +4,33 @@
 
 You need [Docker](https://www.docker.com/) installed on your computer first.
 
+If you don't know much about Docker, that's fine-- it's pretty easy and you can learn more [here](https://www.docker.com/101-tutorial/)
+
 Clone this repo to your computer if you haven't.
 
 Then run this command inside the top-level directory: `docker compose up -d --build`
 
-This should download all of the images you need, build the server, and then run the databases and server. It may take a few minutes especially on the first run.
+This should download all of the images you need, build the server, and then run the databases and server. It may take a few minutes especially on the first run. It is much slower than the debug build which we explain further on.
 
 The `.env` file controls the base admin email and password.
 
 ## Learning Rust
 
-If you don't know how to use Rust, first do the [Rustlings](https://github.com/rust-lang/rustlings) tutorial and then come back here. You don't need to do all the exercises, but enough until you feel confident writing and using Rust.
+If you don't know how to use [Rust](https://doc.rust-lang.org/book/title-page.html), first do the [Rustlings](https://github.com/rust-lang/rustlings) tutorial and then come back here. You don't need to do all the exercises, but enough until you feel confident writing and using Rust. If you get stuck on the tutorials, I've found [this blog](https://lazyren.github.io/studylog/rustlings.html#error-handling) to be the most helpful at quickly and correctly explaining the solutions.
+
+This project uses an asynchronous runtime of Rust called [tokio](https://docs.rs/tokio/latest/tokio/). If you want to know more about asynchronous rust, you can do so [here](https://rust-lang.github.io/async-book/01_getting_started/01_chapter.html). The async Rust book is not necesarrily finished at the moment, but there should still be enough there to help you generally understand what is going on.
 
 ## Learning GraphQL
 
-[Fireship video](https://www.youtube.com/watch?v=eIQh02xuVw4)
+This is the query language that we use to transfer data between the front and backend (importantly, not the database- we use SQLX for that). If you know REST, you will not struggle much with this. If you have never worked in web programming before, recomend watching the longer crash course.
+
+A word of warning: Most resources for GraphQL use examples in Javascript, which means you will have to figure out how to transfer that knowledge over to Rust more indedependently than if this project were in JS.
+
+[Fireship video](https://www.youtube.com/watch?v=eIQh02xuVw4) 
+
+[More in-depth tutorial](https://www.youtube.com/watch?v=qux4-yWeZvo&t=10937s)
+
+This project uses [Async-GraphQL](https://async-graphql.github.io/async-graphql/en/introduction.html), specifically, which is a library implemented in rust for asynchronous programming.
 
 ## Backend Development book
 
@@ -85,6 +97,8 @@ If this is your first time running the databases, you need to migrate Postgres:
 
 Finally start the server with:
 `cargo run`
+
+If you are working on the code without the server running, there is a pretty large chance that there will be some errors communicating with the database (because the db's are not running). Those should go away when you run the docker setup/cargo run situation explained earlier.
 
 ## Prepare the sqlx queries for offline building
 

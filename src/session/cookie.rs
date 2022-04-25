@@ -12,6 +12,13 @@ pub struct SessionCookie {
     pub value: String,
 }
 
+/// the main goal of this file is to create a cookie
+/// cookies in this program help us to know if a user is logged in
+/// and if the logged in user has admin priveleges or not
+
+
+
+
 #[async_trait]
 impl<B> FromRequest<B> for SessionCookie
 where

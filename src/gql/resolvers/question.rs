@@ -14,6 +14,9 @@ pub struct QuestionMutation;
 #[derive(Default)] 
 pub struct QuestionQuery;
 
+
+/// this currently is unreachable. we need to be able to query the questions from the database so that 
+/// the front end can serve them to the user, and we can recieve the answers from them.
 #[Object]
 impl QuestionQuery{
     pub async fn return_questions(

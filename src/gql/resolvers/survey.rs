@@ -5,6 +5,8 @@ use crate::{domain::survey::NewSurveyResponse, gql::context::ParsedContext};
 #[derive(Default)]
 pub struct SurveyMutation;
 
+// a survey response contains a vector of answers. this saves those to the db under the user's id (which is logged via cookie)
+
 #[Object]
 impl SurveyMutation {
     pub async fn create_survey_response(
