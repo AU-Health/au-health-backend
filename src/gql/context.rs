@@ -16,6 +16,10 @@ fn not_logged_in_error() -> Error {
     Error::new("Not logged in")
 }
 
+
+//this whole file is basically dedicated to creating the cookie that tracks whether someone is logged in or not.
+//the context is used throughout method calls to track where things came from (which user)
+
 impl<'a> ParsedContext<'a> {
     pub fn new(ctx: &Context<'a>) -> Self {
         let db_pool = ctx

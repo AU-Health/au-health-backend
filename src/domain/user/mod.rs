@@ -18,6 +18,8 @@ pub struct LoginUser {
 }
 
 impl LoginUser {
+
+    //log the user in by validating their credentials from the database
     pub async fn login_user(
         self,
         pool: &Pool<Postgres>,
@@ -64,6 +66,8 @@ pub struct User {
 }
 
 impl User {
+
+    //ensures the user can only log in with their own password as it is stored in the db
     pub fn verify_password(
         &self,
         argon2: &Argon2,
@@ -89,6 +93,9 @@ impl User {
         Ok(user)
     }
 
+
+    //look up users by their unique ID
+    //*this data flow will probably be helpful for querying questions!!!!
     pub async fn query_by_id(pool: &Pool<Postgres>, user_id: Uuid) -> Result<Self, Error> {
         let user = sqlx::query_as!(
             User,
@@ -108,6 +115,8 @@ impl User {
         Ok(user)
     }
 
+
+    //same as above, but this one searches by email instead of ID
     pub async fn query_by_email(pool: &Pool<Postgres>, email: &str) -> Result<Self, Error> {
         let user = sqlx::query_as!(
             User,

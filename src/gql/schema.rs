@@ -13,7 +13,8 @@ pub fn build_schema() -> GqlSchemaBuilder {
 
 /// Root for all GraphQL Queries.
 #[derive(MergedObject, Default)]
-pub struct Query(UserQuery, SystemQuery, QuestionQuery); //might need to add questionQuery so we can select questions from the db
+pub struct Query(UserQuery, SystemQuery, QuestionQuery); //Added questionQuery so we can select questions from the db
+                                                         //not done yet though, might still need some work. everything else ~should~ be fine...
 
 #[derive(MergedObject, Default)]
 pub struct Mutation(UserMutation, SurveyMutation, QuestionMutation);

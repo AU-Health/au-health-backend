@@ -22,6 +22,9 @@ pub struct NewUser {
 
 pub struct ValidEmail(String);
 
+
+//valid emails end in american.edu. we are not checking against the full 
+//AU database to make sure the emails themselves are actually valid, though.
 impl ValidEmail {
     pub fn parse(s: String) -> Result<Self, String> {
         match validate_email(&s) && s.contains("american.edu") {
@@ -31,6 +34,9 @@ impl ValidEmail {
     }
 }
 
+
+//rust thing where the strings have to be references and not literals
+//helps with lifetimes and ownership.
 impl AsRef<str> for ValidEmail {
     fn as_ref(&self) -> &str {
         &self.0
@@ -58,6 +64,8 @@ impl ValidPassword {
     }
 }
 
+
+//same as the other AsRef above
 impl AsRef<str> for ValidPassword {
     fn as_ref(&self) -> &str {
         &self.0

@@ -17,6 +17,9 @@ pub struct NewSurveyResponse {
     pub answers: Vec<NewAnswer>,
 }
 
+
+//this will create an error if the server is not running- that is ok!
+
 impl NewSurveyResponse {
     pub async fn save_to_db(
         self,

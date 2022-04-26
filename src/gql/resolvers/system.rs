@@ -15,6 +15,8 @@ pub struct HealthCheck {
 
 #[Object]
 impl SystemQuery {
+
+    //this essentially just finds out if everything is running as it should.
     async fn health_check(&self, raw_ctx: &Context<'_>) -> Result<HealthCheck, Error> {
         let ctx = ParsedContext::new(raw_ctx);
 
