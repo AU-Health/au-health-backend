@@ -16,9 +16,6 @@ pub struct SessionCookie {
 /// cookies in this program help us to know if a user is logged in
 /// and if the logged in user has admin priveleges or not
 
-
-
-
 #[async_trait]
 impl<B> FromRequest<B> for SessionCookie
 where

@@ -88,6 +88,8 @@ impl UserMutation {
         Ok(user)
     }
 
+    // When the user logs out, thje cookie will take note and remove the user's saved credentials
+    // From its queries
     async fn logout(&self, ctx: &Context<'_>) -> Result<bool, Error> {
         ctx.insert_http_header(SET_COOKIE, "auth=deleted; Max-Age=-1");
         Ok(true)

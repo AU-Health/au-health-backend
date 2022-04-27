@@ -22,6 +22,7 @@ impl<'a> SessionManager<'a> {
         Self { store }
     }
 
+    // The cookie recognizes the session value does not exist, retuns an error message to the user
     async fn load_session(&self, session_cookie: &SessionCookie) -> Result<Session, Error> {
         self.store
             .load_session(session_cookie.value.clone())

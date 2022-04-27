@@ -23,7 +23,7 @@ pub struct NewUser {
 pub struct ValidEmail(String);
 
 
-//valid emails end in american.edu. we are not checking against the full 
+//valid emails end in american.edu. we are not checking against the full
 //AU database to make sure the emails themselves are actually valid, though.
 impl ValidEmail {
     pub fn parse(s: String) -> Result<Self, String> {
@@ -43,6 +43,8 @@ impl AsRef<str> for ValidEmail {
     }
 }
 
+
+// Checks if user's inputted password is valid. If not valid, the program will tell the user it's invalid
 pub struct ValidPassword(String);
 
 impl ValidPassword {
@@ -77,6 +79,7 @@ pub struct VerifiedNewUser {
     password: ValidPassword,
 }
 
+// Part 1: when the user is successfully verified, the program will parse the user's credentials
 impl TryFrom<NewUser> for VerifiedNewUser {
     type Error = String;
 
@@ -89,6 +92,7 @@ impl TryFrom<NewUser> for VerifiedNewUser {
     }
 }
 
+// Part 2: when the user is successfully verified, the program will parse the user's credentials
 impl VerifiedNewUser {
     pub async fn register_user(
         self,
@@ -103,8 +107,8 @@ impl VerifiedNewUser {
 
         let user = sqlx::query_as!(
             User,
-            r#"INSERT INTO user_account (id, email, password, created_at, updated_at, role) 
-        VALUES ($1, $2, $3, $4, $5, $6) 
+            r#"INSERT INTO user_account (id, email, password, created_at, updated_at, role)
+        VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING id, email, password, created_at, updated_at, role as "role: _";"#,
             Uuid::new_v4(),
             self.email.as_ref(),

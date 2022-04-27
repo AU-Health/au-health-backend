@@ -1,3 +1,5 @@
+// If you're confused about async_graphql, check the readme markdown file. There is a link to the library's
+// information page there. 
 use async_graphql::{Context, Error, Object};
 
 use crate::{domain::survey::NewSurveyResponse, gql::context::ParsedContext};

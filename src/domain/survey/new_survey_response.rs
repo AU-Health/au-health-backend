@@ -43,9 +43,11 @@ impl NewSurveyResponse {
             e
         })?;
 
+
+        // Inserts the answer elements from the user into the query.
         let answer_queries = self.answers.into_iter().map(|ans| {
             sqlx::query!(
-                "INSERT INTO answer (id, created_at, updated_at, answer, survey_response_id, question_id) 
+                "INSERT INTO answer (id, created_at, updated_at, answer, survey_response_id, question_id)
             VALUES ($1, $2, $3, $4, $5, $6);",
                 Uuid::new_v4(),
                 Utc::now(),
@@ -57,6 +59,7 @@ impl NewSurveyResponse {
             .execute(pool)
         });
 
+        // Suspends the execution of an aysnchronous funtion (ie. save_to_db)
         let futures = join_all(answer_queries).await;
 
         for result in futures {

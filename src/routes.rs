@@ -44,6 +44,7 @@ async fn forbidden_response() -> impl IntoResponse {
     StatusCode::FORBIDDEN
 }
 
+// A router provides an interface for creating complex routes as middleware for framework.
 pub fn build_graphql_router(configuration: GraphQlSettings, schema: GqlSchema) -> Router {
     let schema_router = Router::new();
 

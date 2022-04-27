@@ -54,7 +54,7 @@ impl LoginUser {
     }
 }
 #[derive(SimpleObject, Debug, Clone)]
-/// User with all fields attached. Returned from DB.
+// User with all fields attached. Returned from DB.
 pub struct User {
     pub id: Uuid,
     pub email: String,
@@ -80,6 +80,7 @@ impl User {
             .is_ok())
     }
 
+    // When user role changes, the query updates to match the role's titles and privileges
     pub async fn change_role(&self, pool: &Pool<Postgres>, new_role: Role) -> Result<Self, Error> {
         let user = sqlx::query_as!(
             User,

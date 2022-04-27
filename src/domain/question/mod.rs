@@ -37,9 +37,9 @@ pub struct ResponseType {
 
 impl NewQuestion {
 
-    //saves a question to the database - 
+    //saves a question to the database -
     //TODO: allow us to retrieve said questions from the db and serve them back to the user.
-    
+
     pub async fn save_to_db(self, pool: &Pool<Postgres>) -> Result<Question, Error> {
         let category_query = sqlx::query_as!(Category, "SELECT id, created_at, updated_at, name FROM question_category WHERE name = $1 LIMIT 1;", self.category).fetch_one(pool).await;
 
@@ -52,7 +52,7 @@ impl NewQuestion {
 
         let response_type = sqlx::query_as!(ResponseType, "SELECT id, created_at, updated_at, response_type FROM response_type WHERE response_type = $1 LIMIT 1;", self.response_type).fetch_one(pool).await?;
 
-        let question = sqlx::query_as!(Question, "INSERT INTO question (id, created_at, updated_at, question, category_id, response_type_id) 
+        let question = sqlx::query_as!(Question, "INSERT INTO question (id, created_at, updated_at, question, category_id, response_type_id)
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *;", Uuid::new_v4(), Utc::now(), Utc::now(), self.question, category.id, response_type.id).fetch_one(pool).await?;
 
@@ -60,8 +60,8 @@ impl NewQuestion {
     }
 
 
-    //this might be a good start to querying the question... someone that actually knows SQL can maybe make this work lol
-    
+    //this might be a good start to querying the question... someone that actually knows SQL can maybe make this work 
+
     // pub async fn get_from_db(self, pool: &Pool<Postgres>) -> Result<Question, Error>{
 
     //     let question = sqlx::query_as!(Question, "SELECT question, category_id, response_type_id, FROM question WHERE question = $1 LIMIT $1;");
