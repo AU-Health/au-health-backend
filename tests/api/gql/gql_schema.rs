@@ -2,6 +2,14 @@
 pub mod queries {
     use super::schema;
 
+    //schemas are used in GraphQL to show what can be queried or mutated.
+    //queries simply retrieve data, while mutations change, add, or delete it.
+
+    //each of these structs relate to an object that the scheme can call or needs in order to make a mutation
+    //for example, this first struct is used as an argument to register a new user,
+    //and the struct contains a user object.
+    //further down, you can find that the user object holds an email, id, and times.
+
     #[derive(cynic::FragmentArguments, Debug)]
     pub struct RegisterArguments {
         pub user: NewUser,
