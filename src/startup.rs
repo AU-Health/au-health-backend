@@ -23,6 +23,7 @@ pub async fn run(
 
     let graphql_router = build_graphql_router(graphql_configuration, schema);
 
+    // TCP connection with axum server
     let server = axum::Server::from_tcp(listener)
         .expect("Failed to bind server to listener")
         .serve(graphql_router.into_make_service());

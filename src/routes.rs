@@ -40,6 +40,9 @@ async fn graphql_handler(
     response
 }
 
+// If the user tries to commit an action that their account does not have the privileges to do so,
+// the program will log a "FORBIDDEN" status code.
+
 async fn forbidden_response() -> impl IntoResponse {
     StatusCode::FORBIDDEN
 }
@@ -61,5 +64,3 @@ pub fn build_graphql_router(configuration: GraphQlSettings, schema: GqlSchema) -
 
     router_with_route.layer(AddExtensionLayer::new(schema))
 }
-
-// Initial

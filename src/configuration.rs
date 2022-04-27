@@ -25,6 +25,9 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
     settings.try_into()
 }
 
+// [derive(serde::Deserialize)] is a data structure that can be deserialized from any data format supported
+// by Serde. Refer to https://docs.serde.rs/serde/trait.Deserialize.html
+
 #[derive(serde::Deserialize)]
 pub struct Settings {
     pub database: DatabaseSettings,
